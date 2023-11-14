@@ -1,0 +1,35 @@
+program x;
+
+vars
+int: i, j;
+
+function void uno(int a)
+vars
+int: i;
+{
+    i = a * 2;
+
+    if(i < a + 4)
+    {
+        i = j - 1;
+    }
+
+    write(i);
+} 
+
+function int dos(int b)
+{
+    b = b * i + j;
+
+    return(b * 2);
+}
+
+main()
+{
+    i = 2;
+    j = i * 2 - 1;
+
+    uno(j);
+    
+    write(i + dos(i + j));
+}
