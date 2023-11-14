@@ -8,7 +8,7 @@ scopedDeclaredVars = declaredScopedVars()
 
 def p_programa(t):
     '''
-    programa : PROGRAM ID ';' dec_var def_func impl_main
+    programa : PROGRAM ID ';' pn_set_global dec_var def_func impl_main pn_get_vars_table
     '''
 
 def p_dec_var(t):
@@ -18,21 +18,23 @@ def p_dec_var(t):
 
 def p_tipos(t):
     '''
-    tipos : INT
-	    | FLOAT
-	    | CHAR
+    tipos : INT pn_set_type
+	    | FLOAT pn_set_type
+	    | CHAR pn_set_type
     '''
+    #print(t[1])
 
 def p_id_dec_var(t):
     '''
-    id_dec_var : ID '[' CTE_INT ']' id_dec_var_prime
-	    | ID id_dec_var_prime
+    id_dec_var : ID pn_add_var '[' CTE_INT ']' id_dec_var_prime
+	    | ID pn_add_var id_dec_var_prime
     '''
+    #print(t[1])
 
 def p_id_dec_var_prime(t):
     '''
-    id_dec_var_prime : ',' ID '[' CTE_INT ']' id_dec_var_prime
-        | ',' ID id_dec_var_prime
+    id_dec_var_prime : ',' ID pn_add_var '[' CTE_INT ']' id_dec_var_prime
+        | ',' ID pn_add_var id_dec_var_prime
         | null
     '''
 
@@ -44,9 +46,10 @@ def p_dec_var_prime(t):
 
 
 
-def p_def_func(t) :
+def p_def_func(t):
     '''
-    def_func : FUNCTION tipos_func ID '(' tipos ID param_prime ')' func_dec_var '{' est est_prime func_return '}' def_func_prime
+    def_func : FUNCTION tipos_func ID pn_set_scope '(' tipos ID pn_add_var param_prime ')' func_dec_var '{' est est_prime func_return '}' def_func_prime
+        | FUNCTION tipos_func ID pn_set_scope '(' ')' func_dec_var '{' est est_prime func_return '}' def_func_prime
         | null
     '''
 
@@ -57,10 +60,12 @@ def p_tipos_func(t):
         | CHAR
         | VOID
     '''
+    #print(t[1])
+    #ESTE ES SOLO PARA EL RETORNO DE LAS FUNCIONES, NO SE USA EN VARIABLES
 
 def p_param_prime(t):
     '''
-    param_prime : ',' tipos ID param_prime
+    param_prime : ',' tipos ID pn_add_var param_prime
         | null
     '''
 
@@ -78,7 +83,7 @@ def p_func_return(t):
 
 def p_def_func_prime(t):
     '''
-    def_func_prime : FUNCTION tipos_func ID '(' tipos ID param_prime ')' func_dec_var '{' est est_prime func_return '}' def_func_prime
+    def_func_prime : FUNCTION tipos_func ID pn_set_scope '(' tipos ID pn_add_var param_prime ')' func_dec_var '{' est est_prime func_return '}' def_func_prime
         | null
     '''
 
@@ -118,9 +123,9 @@ def p_est_asig(t):
      
 def p_var_id(t):
      '''
-     var_id : ID p_pn_add_var
-        | ID p_pn_add_var '[' hiper_exp ']'
-    '''
+     var_id : ID
+        | ID '[' hiper_exp ']'
+     '''
      
 def p_hiper_exp(t):
      '''
@@ -176,6 +181,7 @@ def p_sub_exp(t):
 def p_est_llam_func(t):
      '''
      est_llam_func : ID '(' llam_func_param ')' ';'
+        | ID '(' llam_func_param ')'
     '''
      
 def p_llam_func_param(t):
@@ -251,17 +257,7 @@ def p_est_rep_no_con_id(t):
         | null
     '''
      
-
-
-def p_pn_add_var(t):
-     '''
-     p_pn_add_var : null
-     '''
-     scopedDeclaredVars.addVarInScope('testGlobal', t[-2], 'testType')
-     print('testGlobal')
-     print(t[-2])
-     print('testType')
-     print(" ")
+    
 
     
 
@@ -278,6 +274,52 @@ def p_error(t):
     '''
     '''
     raise Exception("Error en linea " + str(t.lineno))
+
+#==============================================================================
+#==============================================================================
+#==============================================================================
+#==============================================================================
+#==============================================================================
+
+
+def p_pn_add_var(t):
+     '''
+     pn_add_var : null
+     '''
+     print(t[-1])
+     scopedDeclaredVars.addVar(t[-1])
+        
+     
+
+def p_pn_set_global(t):
+     '''
+     pn_set_global : null
+     '''
+     print("Scope Global==================================")
+     scopedDeclaredVars.setActualScope('Global')
+
+def p_pn_set_scope(t):
+     '''
+     pn_set_scope : null
+     '''
+     print("Scope " + t[-1] +  "==================================")
+     scopedDeclaredVars.setActualScope(t[-1])
+
+def p_pn_set_type(t):
+     '''
+     pn_set_type : null
+     '''
+     print("Type " + t[-1])
+     scopedDeclaredVars.setActualType(t[-1])
+
+def p_pn_get_vars_table(t):
+     '''
+     pn_get_vars_table : null
+     '''
+     scopedDeclaredVars.getVarTable()
+
+
+
 
 parser = yacc.yacc()
     
