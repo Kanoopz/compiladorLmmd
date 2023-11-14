@@ -2,6 +2,10 @@ class declaredScopedVars:
     def __init__(self):
         self.declaredVarsScope = {}
 
+        self.actualScope = 'noInitialized'
+        self.actualType = 'noInitialized'
+
+
     def addVarInScope(self, scope, var, type): 
         scopeInDictonary = self.declaredVarsScope.get(scope, 'notDeclared')
         
@@ -23,6 +27,20 @@ class declaredScopedVars:
         else:
             print("ERROR: var already declared.")
 
+            raise TypeError("ERROR: " + var + " already declared in " + scope + " scope.")
         print(" ")
+
+    def setActualScope(self, scope): 
+        self.actualScope = scope
+
+    def setActualType(self, type):
+        self.actualType = type
+
+    def addVar(self, varId):
+        self.addVarInScope(self.actualScope, varId, self.actualType)
+
+    def getVarTable(self):
+        print("methodGetVarTable")
+        print(self.declaredVarsScope)
 
         
