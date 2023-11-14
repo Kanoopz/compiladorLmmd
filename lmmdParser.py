@@ -1,6 +1,9 @@
 import ply.yacc as yacc
 from lmmdLexer import tokens
 
+from varsTable import declaredScopedVars
+scopedDeclaredVars = declaredScopedVars()
+
 
 
 def p_programa(t):
@@ -115,8 +118,8 @@ def p_est_asig(t):
      
 def p_var_id(t):
      '''
-     var_id : ID
-        | ID '[' hiper_exp ']'
+     var_id : ID p_pn_add_var
+        | ID p_pn_add_var '[' hiper_exp ']'
     '''
      
 def p_hiper_exp(t):
@@ -247,8 +250,18 @@ def p_est_rep_no_con_id(t):
      est_rep_no_con_id : '[' exp ']'
         | null
     '''
+     
 
 
+def p_pn_add_var(t):
+     '''
+     p_pn_add_var : null
+     '''
+     scopedDeclaredVars.addVarInScope('testGlobal', t[-2], 'testType')
+     print('testGlobal')
+     print(t[-2])
+     print('testType')
+     print(" ")
 
     
 
