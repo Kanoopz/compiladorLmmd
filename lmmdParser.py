@@ -132,8 +132,8 @@ def p_est_prime(t):
 
 def p_est_asig(t):
      '''
-     est_asig : ID '=' hiper_exp ';'
-        | ID '[' hiper_exp ']' '=' hiper_exp ';'
+     est_asig : ID pn_sequential_statute_1 '=' pn_sequential_statute_2 hiper_exp pn_sequential_statute_3 ';'
+        | ID pn_sequential_statute_1 '[' hiper_exp ']' '=' pn_sequential_statute_2 hiper_exp pn_sequential_statute_3 ';'
     '''
      
 def p_hiper_exp(t):
@@ -264,13 +264,13 @@ def p_escritura_param_prime(t):
 
 def p_est_deci(t):
      '''
-     est_deci : IF '(' hiper_exp ')' '{' est est_prime '}' deci_else
+     est_deci : IF '(' hiper_exp ')' pn_decision_conditional_statute_1 '{' est est_prime '}' deci_else
     '''
      
 def p_deci_else(t):
      '''
-     deci_else : ELSE '{' est est_prime '}'
-        | null
+     deci_else : ELSE pn_decision_conditional_statute_3 '{' est est_prime '}' pn_decision_conditional_statute_2
+        | pn_decision_conditional_statute_2
     '''
      
 def p_est_rep_con(t):
@@ -471,6 +471,64 @@ def p_pn_aritmetic_expressions_print(t):
      #print(operatorsStack)
      #print("temporal", temporalsCounter)
      np.printStacks()
+
+#==============================================================================
+#==============================================================================
+#==============================================================================
+
+def p_pn_sequential_statute_1(t):
+     '''
+     pn_sequential_statute_1 : null
+     '''
+
+     actualScope = np.getActualAritmeticScope()
+     varInDictionary = scopedDeclaredVars.checkVar(t[-1], actualScope)
+     
+     if(varInDictionary[0] == True):
+        np.addToOperandsStack(t[-1])
+        np.addToTypesStack(varInDictionary[1])
+
+def p_pn_sequential_statute_2(t):
+     '''
+     pn_sequential_statute_2 : null
+     '''
+
+     np.addToOperatorsStack(t[-1])
+
+def p_pn_sequential_statute_3(t):
+     '''
+     pn_sequential_statute_3 : null
+     '''
+     np.processSequentialStatutePostStatute()
+
+#==============================================================================
+
+# LECTURA
+
+# ESCRITURA
+
+#==============================================================================
+
+
+def p_pn_decision_conditional_statute_1(t):
+     '''
+     pn_decision_conditional_statute_1 : null
+     '''
+     np.processDecisionPostConditionalStatute()
+
+def p_pn_decision_conditional_statute_2(t):
+     '''
+     pn_decision_conditional_statute_2 : null
+     '''
+     np.processDecisionPostStatement()
+
+def p_pn_decision_conditional_statute_3(t):
+     '''
+     pn_decision_conditional_statute_3 : null
+     '''
+     np.processDecisionElse()
+
+
 
 
 
