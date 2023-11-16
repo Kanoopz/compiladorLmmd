@@ -15,6 +15,7 @@ class NP:
         self.operandsStack = []
         self.typesStack = []
         self.operatorsStack = []
+        self.jumpsStack = []
         self.actualAritmeticScope = 'noInitialized'
 
         self.temporalsCounter = 0
@@ -475,7 +476,259 @@ class NP:
                 print("POST:", self.operatorsStack)
         print(" ")
 
-        
+#==============================================================================
+#==============================================================================
+#==============================================================================
+
+    def processSequentialStatutePostStatute(self):
+        length = len(self.operatorsStack)
+        index = length - 1
+
+        print(" ")
+        print("processSequentialStatutePostStatute/////////////////////////////////////////////")
+        print("operatorStack: ", self.operatorsStack)
+        print("Length: ", length)
+
+        if(length > 0):
+            print("=======================================")
+            print("index: ", index)
+            print("Last element: ", self.operatorsStack[index])
+
+            while((len(self.operatorsStack) > 0) and (self.operatorsStack[index] == '+' or self.operatorsStack[index] == '-' or self.operatorsStack[index] == '*' or self.operatorsStack[index] == '/' or self.operatorsStack[index] == '<' or self.operatorsStack[index] == '>' or self.operatorsStack[index] == '==' or self.operatorsStack[index] == '!=')):
+                if(length > 0):
+                    print("PRE OPERATOR FOUND")
+                    print("=======================================")
+                    print("Pre: ", self.operandsStack)
+                    print("Pre: ", self.typesStack)
+                    print("Pre: ", self.operatorsStack)
+                    print("Found +, -, *, /, <, >, ==, !=", True)
+                    #self.operatorsStack.pop()
+
+
+
+
+                    rightOperand = self.operandsStack.pop()
+                    leftOperand = self.operandsStack.pop()
+                    rightType = self.typesStack.pop()
+                    leftType = self.typesStack.pop()
+                    operator = self.operatorsStack.pop()
+
+                    print("TYPE MATCHING DATA")
+                    print([operator, leftType, rightType])
+                        
+                    #CHECAR COMPATIBILIDAD DE TIPOS.
+                    resultingType = matchTypes.match((operator, leftType, rightType))
+
+                    self.temporalsCounter = self.temporalsCounter + 1
+                    self.quadraplesCounter = self.quadraplesCounter + 1
+
+                    quadruple = [operator, leftOperand, rightOperand, self.temporalsCounter]
+
+                    self.quadruplesDictionary[self.quadraplesCounter] = quadruple
+
+                    self.operandsStack.append(self.temporalsCounter)
+                    self.typesStack.append(resultingType)
+
+
+
+
+                    print("Post: ", self.operandsStack)
+                    print("Post: ", self.typesStack)
+                    print("Post: ", self.operatorsStack)
+
+                    length = len(self.operatorsStack)
+                    index = length - 1
+                    print("New index: ", index)
+
+                    if(length > 0):
+                            print("New last element: ", self.operatorsStack[index])
+
+                            if(self.operatorsStack[index] != ')'):
+                                print("POST FOUND TRUE")
+                            else:
+                                found = False
+                                print("Found +, -, *, /, <, >, ==, !=", False)
+                    else:
+                        found = False
+                        print("Found +, -, *, /, <, >, ==, !=", False)
+            
+            if((len(self.operatorsStack) > 0) and (self.operatorsStack[index] == '=')):
+                print("FOUND RELATIONAL OPERATOR, POPING OPERATOR")
+                print("Pre: ", self.operandsStack)
+                print("Pre: ", self.typesStack)
+                print("PRE:", self.operatorsStack)
+
+
+
+
+                #self.operatorsStack.pop()
+                rightOperand = self.operandsStack.pop()
+                leftOperand = self.operandsStack.pop()
+                rightType = self.typesStack.pop()
+                leftType = self.typesStack.pop()
+                operator = self.operatorsStack.pop()
+
+                print("TYPE MATCHING DATA FOR ASIGNATION OPERATOR (=)")
+                print([operator, leftType, rightType])
+                        
+                #CHECAR COMPATIBILIDAD DE TIPOS.
+                resultingType = matchTypes.match((operator, leftType, rightType))
+
+                #self.temporalsCounter = self.temporalsCounter + 1
+                self.quadraplesCounter = self.quadraplesCounter + 1
+
+                quadruple = [operator, rightOperand, ' ', leftOperand]
+
+                self.quadruplesDictionary[self.quadraplesCounter] = quadruple
+
+                #########self.operandsStack.append(self.temporalsCounter)
+                #self.typesStack.append(resultingType)
+
+
+
+
+                print("Post: ", self.operandsStack)
+                print("Post: ", self.typesStack)
+                print("POST:", self.operatorsStack)
+            elif((len(self.operatorsStack) > 0) and (self.operatorsStack[index] != '=')):
+                raise TypeError("ERROR: NO ASIGNATION OPERATOR FOUND.")
+        print(" ")
+
+#==============================================================================
+
+# Lectura 
+
+# Escritura
+
+# #============================================================================== 
+
+    def processDecisionPostConditionalStatute(self):
+        print(" ")
+        print("IF GO TO QUADRUPLE GENERATION")
+        print("=======================================")
+        print("Pre: ", self.operandsStack)
+        print("Pre: ", self.typesStack)
+        print("Pre: ", self.operatorsStack)
+        print("Pre: ", self.jumpsStack)
+
+
+
+
+        resultOperand = self.operandsStack.pop()
+        resultType = self.typesStack.pop()
+
+        print("resultType: ", resultType)
+
+        if(resultType != 'bool'):
+            raise TypeError("ERROR: IF EXPRESSION TYPE MISMATCH (NOT BOOL).")
+        elif(resultType == 'bool'):
+            print("RESULTING TYPE BOOL: CORRECT")
+
+
+        print(['goToF', resultOperand, ' ' , '#'])
+                            
+        #CHECAR COMPATIBILIDAD DE TIPOS.
+        #resultingType = matchTypes.match((operator, leftType, rightType))
+
+        #self.temporalsCounter = self.temporalsCounter + 1
+        self.quadraplesCounter = self.quadraplesCounter + 1
+
+        #quadruple = [operator, leftOperand, rightOperand, self.temporalsCounter]
+        quadruple = ['goToF', resultOperand, ' ' , '#']
+
+        self.quadruplesDictionary[self.quadraplesCounter] = quadruple
+        self.jumpsStack.append(self.quadraplesCounter)
+
+        #self.operandsStack.append(self.temporalsCounter)
+        #self.typesStack.append(resultingType)
+
+
+
+
+        print("Post: ", self.operandsStack)
+        print("Post: ", self.typesStack)
+        print("Post: ", self.operatorsStack)
+        print("Post: ", self.jumpsStack)
+        print(" ")
+
+    def processDecisionPostStatement(self):
+        print(" ")
+        print("IF POST STATEMENT: FILL PENDING JUMPS")
+        print("=======================================")
+        print("Pre: ", self.operandsStack)
+        print("Pre: ", self.typesStack)
+        print("Pre: ", self.operatorsStack)
+        print("Pre: ", self.jumpsStack)
+
+
+
+
+        counter = self.quadraplesCounter + 1
+        pendingJump = self.jumpsStack.pop()
+        quadruple = self.quadruplesDictionary[pendingJump]
+
+        print("quadruple: ", quadruple)
+        print("quadruple[0]: ", quadruple[0])
+        print("quadruple[1]: ", quadruple[1])
+        print("quadruple[2]: ", quadruple[2])
+        print("quadruple[3]: ", quadruple[3])
+
+        quadruple[3] = counter
+
+        print("New quadruple with counter: ", quadruple)
+
+        self.quadruplesDictionary[pendingJump] = quadruple
+
+
+
+
+        print("Post: ", self.operandsStack)
+        print("Post: ", self.typesStack)
+        print("Post: ", self.operatorsStack)
+        print("Post: ", self.jumpsStack)
+        print(" ")
+
+    #EL 3 LLENA EL 2
+    def processDecisionElse(self):
+        print(" ")
+        print("IF POST STATEMENT: FILL PENDING JUMPS")
+        print("=======================================")
+        print("Pre: ", self.operandsStack)
+        print("Pre: ", self.typesStack)
+        print("Pre: ", self.operatorsStack)
+        print("Pre: ", self.jumpsStack)
+
+
+
+
+        self.quadraplesCounter = self.quadraplesCounter + 1
+        counter = self.quadraplesCounter + 1
+
+
+        pendingJump = self.jumpsStack.pop()
+        quadruple = self.quadruplesDictionary[pendingJump]
+
+        quadruple[3] = counter
+
+        print("New quadruple with counter: ", quadruple)
+
+        self.quadruplesDictionary[pendingJump] = quadruple
+
+
+
+        elseQuadruple = ['goTo', ' ', ' ', '#']
+
+        self.quadruplesDictionary[self.quadraplesCounter] = elseQuadruple
+        self.jumpsStack.append(self.quadraplesCounter)
+
+
+
+
+        print("Post: ", self.operandsStack)
+        print("Post: ", self.typesStack)
+        print("Post: ", self.operatorsStack)
+        print("Post: ", self.jumpsStack)
+        print(" ")
      
 
     def printStacks(self):
