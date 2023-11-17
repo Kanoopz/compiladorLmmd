@@ -597,8 +597,213 @@ class NP:
 #==============================================================================
 
 # Lectura 
+    def processWrite(self):
+        print(" ")
+        print("WRITE QUADRUPLE GENERATION")
+        print("=======================================")
+        print("Pre: ", self.operandsStack)
+        print("Pre: ", self.typesStack)
+        print("Pre: ", self.operatorsStack)
+        print("Pre: ", self.jumpsStack)
 
-# Escritura
+
+
+
+        resultOperand = self.operandsStack.pop()
+        self.typesStack.pop()
+
+
+        print(['Write', ' ', ' ' , resultOperand])
+                            
+        self.quadraplesCounter = self.quadraplesCounter + 1
+
+        quadruple = ['Write', ' ', ' ' , resultOperand]
+
+        self.quadruplesDictionary[self.quadraplesCounter] = quadruple
+
+
+        length = len(self.operandsStack)
+        index = length - 1
+
+        if(self.operandsStack[index] != '('):
+            raise TypeError("ERROR: NOT (")
+        elif(self.operandsStack[index] == '('):
+            print("FOUND (, PROCESS CORRECT.")
+            self.operandsStack.pop()
+        else:
+            print("SOMETHING WENT BAD, WRONG LOGIC")
+            raise TypeError("SOMETHING WENT BAD, WRONG LOGIC")
+
+
+
+
+        print("Post: ", self.operandsStack)
+        print("Post: ", self.typesStack)
+        print("Post: ", self.operatorsStack)
+        print("Post: ", self.jumpsStack)
+        print(" ")  
+
+    def preProcessWriteQuadruple(self):
+        length = len(self.operandsStack)
+        index = length - 1
+        indexForWriteQuadruple = index - 1
+
+        print(" ")
+        print("PROCESS HIPER EXP OF WRITE/////////////////////////////////////////////")
+        print("operandsStack: ", self.operandsStack)
+        print("Length: ", length)
+
+        if(length > 0):
+            print("=======================================")
+            print("index: ", index)
+            print("Last element: ", self.operandsStack[index])
+            print("index - 1: ", indexForWriteQuadruple)
+            print("Last element - 1: ", self.operandsStack[indexForWriteQuadruple])
+
+
+            while((len(self.operatorsStack) > 0) and (self.operandsStack[indexForWriteQuadruple] != '(')):
+                if(length > 0):
+                    print("PRE OPERATOR FOUND")
+                    print("=======================================")
+                    print("Pre: ", self.operandsStack)
+                    print("Pre: ", self.typesStack)
+                    print("Pre: ", self.operatorsStack)
+                    print("Not found ( as index - 1 of operands", True)
+                    #self.operatorsStack.pop()
+
+
+
+
+                    rightOperand = self.operandsStack.pop()
+                    leftOperand = self.operandsStack.pop()
+                    rightType = self.typesStack.pop()
+                    leftType = self.typesStack.pop()
+                    operator = self.operatorsStack.pop()
+
+                    print("TYPE MATCHING DATA")
+                    print([operator, leftType, rightType])
+                        
+                    #CHECAR COMPATIBILIDAD DE TIPOS.
+                    resultingType = matchTypes.match((operator, leftType, rightType))
+
+                    self.temporalsCounter = self.temporalsCounter + 1
+                    self.quadraplesCounter = self.quadraplesCounter + 1
+
+                    quadruple = [operator, leftOperand, rightOperand, self.temporalsCounter]
+
+                    self.quadruplesDictionary[self.quadraplesCounter] = quadruple
+
+                    self.operandsStack.append(self.temporalsCounter)
+                    self.typesStack.append(resultingType)
+
+
+
+
+                    print("Post: ", self.operandsStack)
+                    print("Post: ", self.typesStack)
+                    print("Post: ", self.operatorsStack)
+
+                    length = len(self.operandsStack)
+                    index = length - 1
+                    indexForWriteQuadruple = index - 1
+
+                    print("New index: ", index)
+                    print("New last element: ", self.operandsStack[index])
+                    print("Index - 1: ", indexForWriteQuadruple)
+                    print("New last element - 1: ", self.operandsStack[indexForWriteQuadruple])
+
+                    if(length > 0):
+                            #print("New last element: ", self.operatorsStack[index])
+
+                            if(self.operandsStack[indexForWriteQuadruple] != '('):
+                                print("POST FOUND FALSE, STILL NOT ( AS INDEX FOR WRITE QUADRUPLES")
+                            else:
+                                found = False
+                                print("FOUND: ( AS INDEX FOR WRITE QUADRUPLE")
+                    else:
+                        print("STACK EMPTY")
+            
+            if((len(self.operatorsStack) > 0) and (self.operatorsStack[index] == '(')):
+                print("///////////////////////////////////////////////////////")
+                print("FOUND ( AS INDEX FOR WRITE QUADRUPLE")
+                print("///////////////////////////////////////////////////////")
+        print(" ")
+
+    #HAY QUE AÑADIR UN PARENTESIS EN OPERADORES TAMBIEN
+    def addWritePreProcessToOperandsStack(self):
+        print("///////////////////////////////////////////////////////")
+        print("PRE PRCOESS OF HIPER EXP OF WRITE////////////////////////////////")
+        print("///////////////////////////////////////////////////////")
+
+        self.operandsStack.append('(') 
+        print(" ")
+        print("Processing: (..........................................")
+        print(self.operandsStack)
+        print(" ")
+
+
+
+# Escritura: EL METODO DE VARIABLES / OPERANDOS DEBERÍA GUARDAR AUTOMATICAMENTE EL OPERANDO DENTRO DE LOS PARENTESIS DEL READ.
+    def processReadSaveVar(self, varId, type):
+        print(" ")
+        print("READ SAVE VAR ID")
+        print("=======================================")
+        print("Pre: ", self.operandsStack)
+        print("Pre: ", self.typesStack)
+        print("Pre: ", self.operatorsStack)
+        print("Pre: ", self.jumpsStack)
+
+        print("varId to add: ", varId)
+        print("Type of varId to add: ", type)
+
+
+
+
+        self.operandsStack.append(varId)
+        self.typesStack.append(type)
+
+
+
+
+        print("Post: ", self.operandsStack)
+        print("Post: ", self.typesStack)
+        print("Post: ", self.operatorsStack)
+        print("Post: ", self.jumpsStack)
+        print(" ")
+
+    def processReadVar(self):
+        print(" ")
+        print("READ PROCESS VAR ID QUADRUPLE")
+        print("=======================================")
+        print("Pre: ", self.operandsStack)
+        print("Pre: ", self.typesStack)
+        print("Pre: ", self.operatorsStack)
+        print("Pre: ", self.jumpsStack)
+
+
+
+
+        resultOperand = self.operandsStack.pop()
+        self.typesStack.pop()
+
+
+        print(['Read', ' ', ' ' , resultOperand])
+                            
+        self.quadraplesCounter = self.quadraplesCounter + 1
+
+        quadruple = ['Read', ' ', ' ' , resultOperand]
+
+        self.quadruplesDictionary[self.quadraplesCounter] = quadruple
+
+
+
+
+        print("Post: ", self.operandsStack)
+        print("Post: ", self.typesStack)
+        print("Post: ", self.operatorsStack)
+        print("Post: ", self.jumpsStack)
+        print(" ")
+
 
 # #============================================================================== 
 
@@ -729,7 +934,134 @@ class NP:
         print("Post: ", self.operatorsStack)
         print("Post: ", self.jumpsStack)
         print(" ")
-     
+
+#==============================================================================
+#==============================================================================
+#==============================================================================
+
+    def processWhileCyclePreExpression(self):
+        print(" ")
+        print("WHILE PRE EXPRESSION TO QUADRUPLE GENERATION")
+        print("=======================================")
+        print("Pre: ", self.operandsStack)
+        print("Pre: ", self.typesStack)
+        print("Pre: ", self.operatorsStack)
+        print("Pre: ", self.jumpsStack)
+
+
+
+
+        contador = self.quadraplesCounter + 1
+        self.jumpsStack.append(contador)
+
+
+
+
+        print("Post: ", self.operandsStack)
+        print("Post: ", self.typesStack)
+        print("Post: ", self.operatorsStack)
+        print("Post: ", self.jumpsStack)
+
+        print("quadruplesDictionary: ")
+        print(self.quadruplesDictionary)
+        print(" ")
+
+    def processWhileCyclePostExpression(self):
+        print(" ")
+        print("WHILE POST EXPRESSION QUADRUPLE GENERATION")
+        print("=======================================")
+        print("Pre: ", self.operandsStack)
+        print("Pre: ", self.typesStack)
+        print("Pre: ", self.operatorsStack)
+        print("Pre: ", self.jumpsStack)
+
+
+
+
+        resultType = self.typesStack.pop()
+
+        if(resultType != 'bool'):
+            raise TypeError("ERROR: IF EXPRESSION TYPE MISMATCH (NOT BOOL).")
+        elif(resultType == 'bool'):
+            print("RESULTING TYPE BOOL: CORRECT")
+        
+
+        resultOperand = self.operandsStack.pop()
+
+        self.quadraplesCounter = self.quadraplesCounter + 1
+
+        print(['goToF', resultOperand, ' ' , '#'])
+
+        quadruple = ['goToF', resultOperand, ' ' , '#']
+
+        counter = self.quadraplesCounter + 1
+
+
+        self.quadruplesDictionary[self.quadraplesCounter] = quadruple
+        self.jumpsStack.append(self.quadraplesCounter)
+
+
+
+
+        print("Post: ", self.operandsStack)
+        print("Post: ", self.typesStack)
+        print("Post: ", self.operatorsStack)
+        print("Post: ", self.jumpsStack)
+
+        print("quadruplesDictionary: ")
+        print(self.quadruplesDictionary)
+        print(" ")
+
+    def processWhileCyclePostStatement(self):
+        print(" ")
+        print("WHILE POST STATEMENT: FILL PENDING JUMPS")
+        print("=======================================")
+        print("Pre: ", self.operandsStack)
+        print("Pre: ", self.typesStack)
+        print("Pre: ", self.operatorsStack)
+        print("Pre: ", self.jumpsStack)
+
+
+
+
+        self.quadraplesCounter = self.quadraplesCounter + 1
+        counter = self.quadraplesCounter + 1
+
+
+        pendingJump = self.jumpsStack.pop()
+        quadruple = self.quadruplesDictionary[pendingJump]
+
+        quadruple[3] = counter
+
+        print("New quadruple with counter: ", quadruple)
+
+        self.quadruplesDictionary[pendingJump] = quadruple
+
+
+
+        preExpressionNumberOfQuadruple = self.jumpsStack.pop()
+
+        newQuadrupleToAdd = ['goTo', ' ', ' ', preExpressionNumberOfQuadruple]
+        
+        print(newQuadrupleToAdd)
+
+        self.quadruplesDictionary[self.quadraplesCounter] = newQuadrupleToAdd
+
+
+
+
+        print("Post: ", self.operandsStack)
+        print("Post: ", self.typesStack)
+        print("Post: ", self.operatorsStack)
+        print("Post: ", self.jumpsStack)
+
+        print("quadruplesDictionary: ")
+        print(self.quadruplesDictionary)
+        print(" ")
+
+
+
+
 
     def printStacks(self):
         print(" ")
