@@ -21,7 +21,7 @@ np = NP()
 
 def p_programa(t):
     '''
-    programa : PROGRAM ID ';' pn_set_global dec_var def_func impl_main pn_get_vars_table pn_aritmetic_expressions_print
+    programa : PROGRAM ID ';' pn_set_global dec_var def_func impl_main pn_aritmetic_expressions_print pn_get_vars_table print_funcs_data
     '''
 
 def p_dec_var(t):
@@ -31,9 +31,9 @@ def p_dec_var(t):
 
 def p_tipos(t):
     '''
-    tipos : INT pn_set_type
-	    | FLOAT pn_set_type
-	    | CHAR pn_set_type
+    tipos : INT pn_set_type pn_module_definition_2_and_3_part_1
+	    | FLOAT pn_set_type pn_module_definition_2_and_3_part_1
+	    | CHAR pn_set_type pn_module_definition_2_and_3_part_1
     '''
     #print(t[1])
 
@@ -61,32 +61,73 @@ def p_dec_var_prime(t):
 
 def p_def_func(t):
     '''
-    def_func : FUNCTION tipos_func ID pn_set_scope pn_set_aritmetic_expressions_scope '(' tipos ID pn_add_var param_prime ')' func_dec_var '{' est est_prime func_return '}' def_func_prime
-        | FUNCTION tipos_func ID pn_set_scope pn_set_aritmetic_expressions_scope '(' ')' func_dec_var '{' est est_prime func_return '}' def_func_prime
+    def_func : FUNCTION tipos_func ID pn_set_scope pn_set_aritmetic_expressions_scope pn_module_definition_1_1 '(' tipos ID pn_add_var pn_module_definition_2_and_3_part_2 param_prime ')' func_dec_var '{' est est_prime func_return '}' pn_module_definition_6 pn_module_definition_7 def_func_prime
+        | FUNCTION tipos_func ID pn_set_scope pn_set_aritmetic_expressions_scope pn_module_definition_1_1 '(' ')' func_dec_var '{' est est_prime func_return '}' pn_module_definition_6 pn_module_definition_7 def_func_prime
         | null
     '''
 
 def p_tipos_func(t):
     '''
-    tipos_func : INT
-        | FLOAT
-        | CHAR
-        | VOID
+    tipos_func : INT pn_module_definition_1_2
+        | FLOAT pn_module_definition_1_2
+        | CHAR pn_module_definition_1_2
+        | VOID pn_module_definition_1_2
     '''
     #print(t[1])
     #ESTE ES SOLO PARA EL RETORNO DE LAS FUNCIONES, NO SE USA EN VARIABLES
 
 def p_param_prime(t):
     '''
-    param_prime : ',' tipos ID pn_add_var param_prime
+    param_prime : ',' tipos ID pn_add_var pn_module_definition_2_and_3_part_2 param_prime
         | null
     '''
 
 def p_func_dec_var(t):
     '''
-    func_dec_var : dec_var
+    func_dec_var : f_dec_var
         | null
     '''
+
+
+
+
+
+def p_f_dec_var(t):
+    '''
+    f_dec_var : VARS f_tipos ':' f_id_dec_var ';' f_dec_var_prime
+    '''
+
+def p_f_tipos(t):
+    '''
+    f_tipos : INT pn_set_type pn_module_definition_4_1 
+	    | FLOAT pn_set_type pn_module_definition_4_1
+	    | CHAR pn_set_type pn_module_definition_4_1
+    '''
+    #print(t[1])
+
+def p_f_id_dec_var(t):
+    '''
+    f_id_dec_var : ID pn_add_var pn_module_definition_4_2 '[' CTE_INT ']' f_id_dec_var_prime
+	    | ID pn_add_var pn_module_definition_4_2 f_id_dec_var_prime
+    '''
+    #print(t[1])
+
+def p_f_id_dec_var_prime(t):
+    '''
+    f_id_dec_var_prime : ',' ID pn_add_var pn_module_definition_4_2 '[' CTE_INT ']' f_id_dec_var_prime
+        | ',' ID pn_add_var pn_module_definition_4_2 f_id_dec_var_prime
+        | null
+    '''
+
+def p_f_dec_var_prime(t):
+    '''
+    f_dec_var_prime : f_tipos ':' f_id_dec_var ';' f_dec_var_prime
+        | null
+    '''
+
+
+
+
 
 def p_func_return(t):
     '''
@@ -96,7 +137,8 @@ def p_func_return(t):
 
 def p_def_func_prime(t):
     '''
-    def_func_prime : FUNCTION tipos_func ID pn_set_scope pn_set_aritmetic_expressions_scope '(' tipos ID pn_add_var param_prime ')' func_dec_var '{' est est_prime func_return '}' def_func_prime
+    def_func_prime : FUNCTION tipos_func ID pn_set_scope pn_set_aritmetic_expressions_scope pn_module_definition_1_1 '(' tipos ID pn_add_var pn_module_definition_2_and_3_part_2 param_prime ')' func_dec_var '{' est est_prime func_return '}' pn_module_definition_6 pn_module_definition_7 def_func_prime
+        | FUNCTION tipos_func ID pn_set_scope pn_set_aritmetic_expressions_scope pn_module_definition_1_1 '(' ')' func_dec_var '{' est est_prime func_return '}' pn_module_definition_6 pn_module_definition_7 def_func_prime
         | null
     '''
 
@@ -380,6 +422,8 @@ def p_pn_aritmetic_expressions_1(t):
      #print("New operand (PN1): " + t[-1])
 
      actualScope = np.getActualAritmeticScope()
+     print("ACTUAL SCOPE:", actualScope)
+     print("ID:", t[-1])
      #print("Checking var in dictionary:")
      #print(t[-1])
      #print(actualScope)
@@ -581,6 +625,75 @@ def p_pn_conditional_cycle_while_3(t):
     pn_conditional_cycle_while_3 : null
     '''
     np.processWhileCyclePostStatement()     
+
+#==============================================================================
+#==============================================================================
+#==============================================================================
+
+def p_pn_module_definition_1_1(t):
+    '''
+    pn_module_definition_1_1 : null
+    '''
+    np.processFuncName(t[-3]) 
+
+def p_pn_module_definition_1_2(t):
+    '''
+    pn_module_definition_1_2 : null
+    '''
+    np.processFuncType(t[-1]) 
+
+def p_pn_module_definition_2_and_3_part_1(t):
+    '''
+    pn_module_definition_2_and_3_part_1 : null
+    '''
+    np.processFuncParamVarType(t[-2]) 
+
+def p_pn_module_definition_2_and_3_part_2(t):
+    '''
+    pn_module_definition_2_and_3_part_2 : null
+    '''
+    np.processNewFuncParamVarName(t[-2]) 
+
+
+def p_pn_module_definition_4_1(t):
+    '''
+    pn_module_definition_4_1 : null
+    '''
+    np.processFuncLocalVarType(t[-2]) 
+
+def p_pn_module_definition_4_2(t):
+    '''
+    pn_module_definition_4_2 : null
+    '''
+    np.processNewFuncLocalVarName(t[-2]) 
+
+def p_pn_module_definition_6(t):
+    '''
+    pn_module_definition_6 : null
+    '''
+    np.processNumberOfQuadruples()
+
+def p_pn_module_definition_7(t):
+    '''
+    pn_module_definition_7 : null
+    '''
+    np.processEndOfFunc() 
+
+
+
+
+def p_print_funcs_data(t):
+    '''
+    print_funcs_data : null
+    '''
+    print("#==============================================================================")
+    print("#==============================================================================")
+    print("#==============================================================================")
+    print("PRINTING FUNCS DATA:")
+    np.printFuncsData() 
+    print("#==============================================================================")
+    print("#==============================================================================")
+    print("#==============================================================================")
 
 
 
