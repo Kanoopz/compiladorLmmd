@@ -18,6 +18,26 @@ class NP:
         self.jumpsStack = []
         self.actualAritmeticScope = 'noInitialized'
 
+        self.funcDir = {}
+        #returnType = TIPO
+        #varTable = VAR = TIPO
+        #varCounter = #
+        #paramTable = PARAM = TIPO
+        #paramCounter = #
+        #numOfQuadruples = NUM
+        #numOfTemporalVars = NUM
+
+        self.actualFuncProcessingName = 'noInitialized'
+        self.actualFuncProcessingType = 'noInitialized'
+
+        self.actualFuncProcessingLocalVarType = 'noInitialized'
+        self.actualFuncProcessingParamVarType = 'noInitialized'
+
+        #self.actualFuncProcessingStartingTemporalVar = 0
+        self.actualFuncProcessingStartingQuadruple = 0
+
+
+
         self.temporalsCounter = 0
 
         self.quadraplesCounter = 0
@@ -1058,6 +1078,115 @@ class NP:
         print("quadruplesDictionary: ")
         print(self.quadruplesDictionary)
         print(" ")
+
+#==============================================================================
+#==============================================================================
+#==============================================================================
+
+    def processFuncName(self, funcName):
+        print("#==============================================================================")
+        print("#==============================================================================")
+        print("#==============================================================================")
+
+        print("ACTUAL PROCESSING NAME:", self.actualFuncProcessingName)
+
+        self.actualFuncProcessingName = funcName
+        self.funcDir[funcName] = {}
+        self.funcDir[funcName]['returnType'] = self.actualFuncProcessingType
+        #self.funcDir[funcName]['returnType'] = funcReturnType
+        self.actualFuncProcessingStartingQuadruple = self.quadraplesCounter
+        
+        print("FUNC NAME ADDING", funcName)
+        print("NEW ACTUAL PROCESSING NAME:", self.actualFuncProcessingName)
+
+        print("FUNC DIR:")
+        print(self.funcDir)
+
+        print("#==============================================================================")
+        print("#==============================================================================")
+        print("#==============================================================================")
+
+    def processFuncType(self, funcReturnType):
+        #self.funcDir[funcName] = {}
+        #self.funcDir[self.actualFuncProcessingName]['returnType'] = funcReturnType
+        self.actualFuncProcessingType = funcReturnType
+
+    def processFuncParamVarType(self, paramVarType):
+        self.actualFuncProcessingParamVarType = paramVarType
+
+    def processNewFuncParamVarName(self, paramName):
+        alreadyDeclaredDictionary = self.funcDir[self.actualFuncProcessingName].get('paramTable', 'notDeclared')
+
+        if(alreadyDeclaredDictionary == 'notDeclared'):
+            self.funcDir[self.actualFuncProcessingName]['paramTable'] = {}
+            self.funcDir[self.actualFuncProcessingName]['paramCounter'] = 0
+
+            self.funcDir[self.actualFuncProcessingName]['paramTable'][paramName] = self.actualFuncProcessingParamVarType
+            self.funcDir[self.actualFuncProcessingName]['paramCounter'] = self.funcDir[self.actualFuncProcessingName]['paramCounter'] + 1
+        else:
+            self.funcDir[self.actualFuncProcessingName]['paramTable'][paramName] = self.actualFuncProcessingParamVarType
+            self.funcDir[self.actualFuncProcessingName]['paramCounter'] = self.funcDir[self.actualFuncProcessingName]['paramCounter'] + 1
+
+
+
+        alreadyDeclaredDictionary2 = self.funcDir[self.actualFuncProcessingName].get('localVarTable', 'notDeclared')
+
+        if(alreadyDeclaredDictionary2 == 'notDeclared'):
+            self.funcDir[self.actualFuncProcessingName]['localVarTable'] = {}
+            self.funcDir[self.actualFuncProcessingName]['localVarCounter'] = 0
+
+            self.funcDir[self.actualFuncProcessingName]['localVarTable'][paramName] = self.actualFuncProcessingParamVarType
+            self.funcDir[self.actualFuncProcessingName]['localVarCounter'] = self.funcDir[self.actualFuncProcessingName]['localVarCounter'] + 1
+        else:
+            self.funcDir[self.actualFuncProcessingName]['localVarTable'][paramName] = self.actualFuncProcessingParamVarType
+            self.funcDir[self.actualFuncProcessingName]['localVarCounter'] = self.funcDir[self.actualFuncProcessingName]['localVarCounter'] + 1
+
+    def processFuncLocalVarType(self, localVarType):
+        self.actualFuncProcessingLocalVarType = localVarType
+
+    def processNewFuncLocalVarName(self, localVarName):
+        alreadyDeclaredDictionary = self.funcDir[self.actualFuncProcessingName].get('localVarTable', 'notDeclared')
+
+        if(alreadyDeclaredDictionary == 'notDeclared'):
+            self.funcDir[self.actualFuncProcessingName]['localVarTable'] = {}
+            self.funcDir[self.actualFuncProcessingName]['localVarCounter'] = 0
+
+            self.funcDir[self.actualFuncProcessingName]['localVarTable'][localVarName] = self.actualFuncProcessingLocalVarType
+            self.funcDir[self.actualFuncProcessingName]['localVarCounter'] = self.funcDir[self.actualFuncProcessingName]['localVarCounter'] + 1
+        else:
+            self.funcDir[self.actualFuncProcessingName]['localVarTable'][localVarName] = self.actualFuncProcessingLocalVarType
+            self.funcDir[self.actualFuncProcessingName]['localVarCounter'] = self.funcDir[self.actualFuncProcessingName]['localVarCounter'] + 1
+
+    def processNumberOfQuadruples(self):
+        numberOfQuadruples = self.quadraplesCounter - self.actualFuncProcessingStartingQuadruple
+        self.funcDir[self.actualFuncProcessingName]['quadrupleCounter'] = numberOfQuadruples
+
+    def processEndOfFunc(self):
+        self.actualFuncProcessingName = 'noInitialized'
+        self.actualFuncProcessingType = 'noInitialized'
+
+        self.actualFuncProcessingLocalVarType = 'noInitialized'
+        self.actualFuncProcessingParamVarType = 'noInitialized'
+
+        self.actualFuncProcessingStartingTemporalVar = 0
+        self.actualFuncProcessingStartingQuadruple = 0
+
+        self.quadraplesCounter = self.quadraplesCounter + 1
+        quadruple = ['endFunc', ' ', ' ', ' ']
+        self.quadruplesDictionary[self.quadraplesCounter] = quadruple
+
+
+
+
+
+
+
+    def printFuncsData(self):
+        print(" ")
+        print("funcDir:")
+        print(self.funcDir)
+        print(" ")
+
 
 
 
