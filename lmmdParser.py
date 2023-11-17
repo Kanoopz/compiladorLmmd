@@ -233,15 +233,15 @@ def p_lectura(t):
      
 def p_llam_lect_param(t):
      '''
-     llam_lect_param : ID llam_lect_param_prime
-        | ID '[' hiper_exp ']' llam_lect_param_prime
+     llam_lect_param : ID pn_read_save_ID pn_read llam_lect_param_prime
+        | ID pn_read_save_ID pn_read '[' hiper_exp ']' llam_lect_param_prime
         | null
     '''
      
 def p_llam_lect_param_prime(t):
      '''
-     llam_lect_param_prime : ',' ID llam_lect_param_prime
-        | ',' ID '[' hiper_exp ']' llam_lect_param_prime
+     llam_lect_param_prime : ',' ID pn_read_save_ID pn_read llam_lect_param_prime
+        | ',' ID pn_read_save_ID pn_read '[' hiper_exp ']' llam_lect_param_prime
         | null
     '''
      
@@ -252,13 +252,13 @@ def p_escritura(t):
      
 def p_escritura_param(t):
      '''
-     escritura_param : hiper_exp escritura_param_prime
+     escritura_param : pn_add_pre_process_setup_write hiper_exp pn_pre_process_write pn_write escritura_param_prime
         | null
     '''
      
 def p_escritura_param_prime(t):
      '''
-     escritura_param_prime : ',' hiper_exp escritura_param_prime
+     escritura_param_prime : ',' pn_add_pre_process_setup_write hiper_exp pn_pre_process_write pn_write escritura_param_prime
         | null
     '''
 
@@ -275,7 +275,7 @@ def p_deci_else(t):
      
 def p_est_rep_con(t):
      '''
-     est_rep_con : WHILE '(' hiper_exp ')' DO '{' est est_prime '}'
+     est_rep_con : WHILE pn_conditional_cycle_while_1 '(' hiper_exp ')' pn_conditional_cycle_while_2 DO '{' est est_prime '}' pn_conditional_cycle_while_3
     '''
      
 def p_est_rep_no_con(t):
@@ -503,9 +503,41 @@ def p_pn_sequential_statute_3(t):
 
 #==============================================================================
 
-# LECTURA
+def p_pn_read_save_ID(t):
+     '''
+     pn_read_save_ID : null
+     '''
+     
+     actualScope = np.getActualAritmeticScope()
+     varInDictionary = scopedDeclaredVars.checkVar(t[-1], actualScope)
+     
+     if(varInDictionary[0] == True):
+        np.processReadSaveVar(t[-1], varInDictionary[1])
 
-# ESCRITURA
+def p_pn_read(t):
+     '''
+     pn_read : null
+     '''
+     np.processReadVar()
+
+
+def p_pn_write(t):
+     '''
+     pn_write : null
+     '''
+     np.processWrite()
+
+def p_pn_pre_process_write(t):
+     '''
+     pn_pre_process_write : null
+     '''
+     np.preProcessWriteQuadruple()
+
+def p_pn_add_pre_process_setup_write(t):
+     '''
+     pn_add_pre_process_setup_write : null
+     '''
+     np.addWritePreProcessToOperandsStack()
 
 #==============================================================================
 
@@ -528,6 +560,27 @@ def p_pn_decision_conditional_statute_3(t):
      '''
      np.processDecisionElse()
 
+#==============================================================================
+#==============================================================================
+#==============================================================================
+
+def p_pn_conditional_cycle_while_1(t):
+    '''
+    pn_conditional_cycle_while_1 : null
+    '''
+    np.processWhileCyclePreExpression() 
+
+def p_pn_conditional_cycle_while_2(t):
+    '''
+    pn_conditional_cycle_while_2 : null
+    '''
+    np.processWhileCyclePostExpression()   
+
+def p_pn_conditional_cycle_while_3(t):
+    '''
+    pn_conditional_cycle_while_3 : null
+    '''
+    np.processWhileCyclePostStatement()     
 
 
 
