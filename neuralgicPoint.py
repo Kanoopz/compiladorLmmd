@@ -37,6 +37,11 @@ class NP:
         self.actualFuncProcessingStartingQuadruple = 0
 
 
+        
+        self.actualCallingFuncName = 'noInitialized'
+        self.actualCallingFuncProcessedArguments = 0
+
+
 
         self.temporalsCounter = 0
 
@@ -1174,6 +1179,194 @@ class NP:
         self.quadraplesCounter = self.quadraplesCounter + 1
         quadruple = ['endFunc', ' ', ' ', ' ']
         self.quadruplesDictionary[self.quadraplesCounter] = quadruple
+
+#==============================================================================
+
+    def processVerifyFuncName(self, funcId):
+        alreadyDeclaredDictionary = self.funcDir.get(funcId, 'notDeclared')
+
+        if(alreadyDeclaredDictionary == 'notDeclared'):
+            raise TypeError("ERROR: INVALID INVOCATION OF FUNC ID")
+        else:
+            self.quadraplesCounter = self.quadraplesCounter + 1
+            quadruple = ['Era', funcId, ' ', ' ']
+            self.quadruplesDictionary[self.quadraplesCounter] = quadruple
+
+            self.actualCallingFuncName = funcId
+
+            return True
+        
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        print("!!!!!!!!!!!!!!!!!!!!!!!!" + funcId + "!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+
+    def processEndOfActualParam(self):
+        length = len(self.operatorsStack)
+        index = length - 1
+
+        print("#==============================================================================")
+        print("#==============================================================================")
+        print("#==============================================================================")
+        print("processEndOfActualParam/////////////////////////////////////////////")
+        print("#==============================================================================")
+        print("#==============================================================================")
+        print("#==============================================================================")
+        print("operatorStack: ", self.operatorsStack)
+        print("Length: ", length)
+
+        if(length > 0):
+            print("=======================================")
+            print("index: ", index)
+            print("Last element: ", self.operatorsStack[index])
+
+            while((len(self.operatorsStack) > 0) and (self.operatorsStack[index] != '{')):
+                if(length > 0):
+                    print("PRE OPERATOR FOUND")
+                    print("=======================================")
+                    print("Pre: ", self.operandsStack)
+                    print("Pre: ", self.typesStack)
+                    print("Pre: ", self.operatorsStack)
+                    print("Found +, -, *, /, <, >, == or !=: ", True)
+                    #self.operatorsStack.pop()
+
+
+
+
+                    rightOperand = self.operandsStack.pop()
+                    leftOperand = self.operandsStack.pop()
+                    rightType = self.typesStack.pop()
+                    leftType = self.typesStack.pop()
+                    operator = self.operatorsStack.pop()
+
+                    print("TYPE MATCHING DATA")
+                    print([operator, leftType, rightType])
+                        
+                    #CHECAR COMPATIBILIDAD DE TIPOS.
+                    resultingType = matchTypes.match((operator, leftType, rightType))
+
+                    self.temporalsCounter = self.temporalsCounter + 1
+                    self.quadraplesCounter = self.quadraplesCounter + 1
+
+                    quadruple = [operator, leftOperand, rightOperand, self.temporalsCounter]
+
+                    self.quadruplesDictionary[self.quadraplesCounter] = quadruple
+
+                    self.operandsStack.append(self.temporalsCounter)
+                    self.typesStack.append(resultingType)
+
+
+
+
+                    print("Post: ", self.operandsStack)
+                    print("Post: ", self.typesStack)
+                    print("Post: ", self.operatorsStack)
+
+                    length = len(self.operatorsStack)
+                    index = length - 1
+                    print("New index: ", index)
+
+                    if(length > 0):
+                            print("New last element: ", self.operatorsStack[index])
+
+                            if(self.operatorsStack[index] != '{'):
+                                print("{ STILL NOT FOUND: TRUE")
+                            else:
+                                found = False
+                                print("Found +, -, *, /, <, >, == or !=: ", False)
+                    else:
+                        found = False
+                        print("Found +, -, *, /, <, >, == or !=: ", False)
+            
+            if((len(self.operatorsStack) > 0) and (self.operatorsStack[index] == '{')):
+                print("{ FOUND, POPING IT")
+                print("Pre: ", self.operandsStack)
+                print("Pre: ", self.typesStack)
+                print("Pre: ", self.operatorsStack)
+                self.operatorsStack.pop()
+                paramForQuadruple = self.operandsStack.pop()
+                self.operandsStack.pop()
+                sendedArgumentType = self.typesStack.pop()
+
+                actualProcessingParamNumber = self.actualCallingFuncProcessedArguments + 1
+
+                print(" ")
+                print("SENDED ARGUMENT TYPE: ", sendedArgumentType)
+                print("FOR PARAM NUMBER: ", actualProcessingParamNumber)
+                print("OF INVOCATION OF FUNC:", self.actualCallingFuncName)
+                
+                print(" ")
+
+                funcParamTable = self.funcDir[self.actualCallingFuncName]['paramTable']
+                paramName = list(funcParamTable)[self.actualCallingFuncProcessedArguments]
+                paramType = list(funcParamTable.values())[self.actualCallingFuncProcessedArguments]
+
+
+                print("ORIGINAL PARMA: ", paramName)
+                print("OF TYPE: ", paramType)
+                print(" ")
+
+                if(sendedArgumentType == paramType):
+                    self.quadraplesCounter = self.quadraplesCounter + 1
+                    self.actualCallingFuncProcessedArguments = self.actualCallingFuncProcessedArguments + 1
+
+                    strProcessedArgument = str(self.actualCallingFuncProcessedArguments)
+                    string = "param" + strProcessedArgument
+
+                    quadruple = ["Param", paramForQuadruple, ' ', string]
+
+                    self.quadruplesDictionary[self.quadraplesCounter] = quadruple
+                else:
+                    raise TypeError("ERROR: MISMATCH OF TYPES OF SENDED ARGUMENT AND PARAMETER OF THE FUNC.")
+
+                print("Post: ", self.operandsStack)
+                print("Post: ", self.typesStack)
+                print("Post: ", self.operatorsStack)
+        print(" ")
+
+    def processEndOfParams(self):
+        numberOfParams = self.funcDir[self.actualCallingFuncName]['paramCounter']
+
+        print("NUMBER OF PARAMS: ", numberOfParams)
+        print("NUMBER OF SENDED ARGUMENTS: ", self.actualCallingFuncProcessedArguments)
+
+        if(numberOfParams != self.actualCallingFuncProcessedArguments):
+            raise TypeError("ERROR: MISMATCH OF NUMBER OF SENDED ARGUMENTS AND NUMBER OF PARAMETERS OF THE FUNC.")
+
+    def processEndOfFuncCall(self):
+            numberOfParams = self.funcDir[self.actualCallingFuncName]['paramCounter']
+
+            print("NUMBER OF PARAMS: ", numberOfParams)
+            print("NUMBER OF SENDED ARGUMENTS: ", self.actualCallingFuncProcessedArguments)
+
+            if(numberOfParams != self.actualCallingFuncProcessedArguments):
+                raise TypeError("ERROR: MISMATCH OF NUMBER OF SENDED ARGUMENTS AND NUMBER OF PARAMETERS OF THE FUNC.")
+            else:
+                self.quadraplesCounter = self.quadraplesCounter + 1
+                quadruple = ['goSub', self.actualCallingFuncName, ' ', ' ']
+                self.quadruplesDictionary[self.quadraplesCounter] = quadruple
+
+                self.actualCallingFuncName = 'noInitialized'
+                self.actualCallingFuncProcessedArguments = 0
+
+#==============================================================================
+
+    def processStartOfProgram(self):
+        self.quadraplesCounter = self.quadraplesCounter + 1
+        quadruple = ['goTo', ' ', ' ', '#']
+        self.quadruplesDictionary[self.quadraplesCounter] = quadruple
+
+    def processStartOfMain(self):
+        quadrupleNumber = self.quadraplesCounter + 1
+
+        newQuadruple = self.quadruplesDictionary[1]
+        newQuadruple[3] = quadrupleNumber
+        self.quadruplesDictionary[1] = newQuadruple
+
+    def processEndOfProgram(self):
+        self.quadraplesCounter = self.quadraplesCounter + 1
+        quadruple = ['End', ' ', ' ', ' ']
+        self.quadruplesDictionary[self.quadraplesCounter] = quadruple
+
 
 
 
