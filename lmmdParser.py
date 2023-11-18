@@ -21,7 +21,7 @@ np = NP()
 
 def p_programa(t):
     '''
-    programa : PROGRAM ID ';' pn_set_global dec_var def_func impl_main pn_aritmetic_expressions_print pn_get_vars_table print_funcs_data
+    programa : PROGRAM ID ';' pn_start_of_program pn_set_global dec_var def_func impl_main pn_end_of_program pn_aritmetic_expressions_print pn_get_vars_table print_funcs_data
     '''
 
 def p_dec_var(t):
@@ -144,7 +144,7 @@ def p_def_func_prime(t):
 
 def p_impl_main(t):
     '''
-    impl_main : MAIN pn_set_aritmetic_expressions_scope_global '(' ')' '{' est est_prime '}'
+    impl_main : MAIN pn_set_aritmetic_expressions_scope_global pn_start_of_main '(' ')' '{' est est_prime '}'
     '''
 
 
@@ -252,19 +252,19 @@ def p_sub_exp(t):
      
 def p_est_llam_func(t):
      '''
-     est_llam_func : ID '(' llam_func_param ')' ';'
-        | ID '(' llam_func_param ')'
+     est_llam_func : ID pn_function_calling_1 '(' llam_func_param ')' pn_function_calling_6 ';'
+        | ID pn_function_calling_1 '(' llam_func_param ')' pn_function_calling_6
     '''
      
 def p_llam_func_param(t):
      '''
-     llam_func_param : hiper_exp llam_func_param_prime
+     llam_func_param : pn_function_calling_2 hiper_exp pn_function_calling_3 llam_func_param_prime
         | null
     '''
      
 def p_llam_func_param_prime(t):
      '''
-     llam_func_param_prime : ',' hiper_exp llam_func_param_prime
+     llam_func_param_prime : ',' pn_function_calling_2 hiper_exp pn_function_calling_3 llam_func_param_prime
         | null
     '''
      
@@ -679,6 +679,55 @@ def p_pn_module_definition_7(t):
     '''
     np.processEndOfFunc() 
 
+#==============================================================================
+
+def p_pn_function_calling_1(t):
+    '''
+    pn_function_calling_1 : null
+    '''
+    np.processVerifyFuncName(t[-1]) 
+
+def p_pn_function_calling_2(t):
+    '''
+    pn_function_calling_2 : null
+    '''
+    np.addToOperandsStack('{')
+    np.addToOperatorsStack('{')
+    print("ADDING '{' TO THE STACKS///////////// ")
+
+def p_pn_function_calling_3(t):
+    '''
+    pn_function_calling_3 : null
+    '''
+    np.processEndOfActualParam()
+
+def p_pn_function_calling_6(t):
+    '''
+    pn_function_calling_6 : null
+    '''
+    np.processEndOfFuncCall()
+
+#==============================================================================
+
+def p_pn_start_of_program(t):
+    '''
+    pn_start_of_program : null
+    '''
+    np.processStartOfProgram()
+
+def p_pn_start_of_main(t):
+    '''
+    pn_start_of_main : null
+    '''
+    np.processStartOfMain()
+
+def p_pn_end_of_program(t):
+    '''
+    pn_end_of_program : null
+    '''
+    np.processEndOfProgram()
+
+
 
 
 
@@ -699,9 +748,3 @@ def p_print_funcs_data(t):
 
 
 parser = yacc.yacc()
-    
-
-
-
-
-
