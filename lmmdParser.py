@@ -21,7 +21,7 @@ np = NP()
 
 def p_programa(t):
     '''
-    programa : PROGRAM ID ';' pn_start_of_program pn_set_global dec_var def_func impl_main pn_end_of_program pn_aritmetic_expressions_print pn_get_vars_table print_funcs_data
+    programa : PROGRAM ID ';' pn_start_of_program pn_set_global dec_var def_func pn_reset_local_and_temporal_scopes impl_main pn_end_of_program pn_aritmetic_expressions_print pn_get_vars_table print_funcs_data print_virtual_memory_data
     '''
 
 def p_dec_var(t):
@@ -31,23 +31,23 @@ def p_dec_var(t):
 
 def p_tipos(t):
     '''
-    tipos : INT pn_set_type pn_module_definition_2_and_3_part_1
-	    | FLOAT pn_set_type pn_module_definition_2_and_3_part_1
-	    | CHAR pn_set_type pn_module_definition_2_and_3_part_1
+    tipos : INT pn_set_type pn_module_definition_2_and_3_part_1 pn_set_actual_global_type_to_register_on_virtual_memory pn_set_param_type_to_register_on_vitual_memory
+	    | FLOAT pn_set_type pn_module_definition_2_and_3_part_1 pn_set_actual_global_type_to_register_on_virtual_memory pn_set_param_type_to_register_on_vitual_memory
+	    | CHAR pn_set_type pn_module_definition_2_and_3_part_1 pn_set_actual_global_type_to_register_on_virtual_memory pn_set_param_type_to_register_on_vitual_memory
     '''
     #print(t[1])
 
 def p_id_dec_var(t):
     '''
-    id_dec_var : ID pn_add_var '[' CTE_INT ']' id_dec_var_prime
-	    | ID pn_add_var id_dec_var_prime
+    id_dec_var : ID pn_add_var '[' CTE_INT ']' pn_register_global_array_var id_dec_var_prime
+	    | ID pn_add_var pn_register_global_var id_dec_var_prime 
     '''
     #print(t[1])
 
 def p_id_dec_var_prime(t):
     '''
-    id_dec_var_prime : ',' ID pn_add_var '[' CTE_INT ']' id_dec_var_prime
-        | ',' ID pn_add_var id_dec_var_prime
+    id_dec_var_prime : ',' ID pn_add_var '[' CTE_INT ']' pn_register_global_array_var id_dec_var_prime
+        | ',' ID pn_add_var pn_register_global_var id_dec_var_prime
         | null
     '''
 
@@ -61,9 +61,9 @@ def p_dec_var_prime(t):
 
 def p_def_func(t):
     '''
-    def_func : FUNCTION tipos_func ID pn_set_scope pn_set_aritmetic_expressions_scope pn_module_definition_1_1 '(' tipos ID pn_add_var pn_module_definition_2_and_3_part_2 param_prime ')' func_dec_var '{' est est_prime func_return '}' pn_module_definition_6 pn_module_definition_7 def_func_prime
-        | FUNCTION tipos_func ID pn_set_scope pn_set_aritmetic_expressions_scope pn_module_definition_1_1 '(' ')' func_dec_var '{' est est_prime func_return '}' pn_module_definition_6 pn_module_definition_7 def_func_prime
-        | null
+    def_func : pn_scope_temporals_restart FUNCTION tipos_func ID pn_set_scope pn_set_aritmetic_expressions_scope pn_module_definition_1_1 '(' tipos ID pn_add_var pn_module_definition_2_and_3_part_2 pn_register_param_as_local param_prime ')' func_dec_var '{' est est_prime func_return '}' pn_module_definition_6 pn_module_definition_7 pn_reset_local_and_temporal_scopes def_func_prime pn_reset_local_and_temporal_scopes
+        | pn_scope_temporals_restart FUNCTION tipos_func ID pn_set_scope pn_set_aritmetic_expressions_scope pn_module_definition_1_1 '(' ')' func_dec_var '{' est est_prime func_return '}' pn_module_definition_6 pn_module_definition_7 pn_reset_local_and_temporal_scopes def_func_prime pn_reset_local_and_temporal_scopes
+        | null pn_reset_local_and_temporal_scopes
     '''
 
 def p_tipos_func(t):
@@ -78,7 +78,7 @@ def p_tipos_func(t):
 
 def p_param_prime(t):
     '''
-    param_prime : ',' tipos ID pn_add_var pn_module_definition_2_and_3_part_2 param_prime
+    param_prime : ',' tipos ID pn_add_var pn_module_definition_2_and_3_part_2 pn_register_param_as_local param_prime
         | null
     '''
 
@@ -99,23 +99,23 @@ def p_f_dec_var(t):
 
 def p_f_tipos(t):
     '''
-    f_tipos : INT pn_set_type pn_module_definition_4_1 
-	    | FLOAT pn_set_type pn_module_definition_4_1
-	    | CHAR pn_set_type pn_module_definition_4_1
+    f_tipos : INT pn_set_type pn_module_definition_4_1 pn_set_actual_local_type_to_register_on_virtual_memory
+	    | FLOAT pn_set_type pn_module_definition_4_1 pn_set_actual_local_type_to_register_on_virtual_memory
+	    | CHAR pn_set_type pn_module_definition_4_1 pn_set_actual_local_type_to_register_on_virtual_memory
     '''
     #print(t[1])
 
 def p_f_id_dec_var(t):
     '''
-    f_id_dec_var : ID pn_add_var pn_module_definition_4_2 '[' CTE_INT ']' f_id_dec_var_prime
-	    | ID pn_add_var pn_module_definition_4_2 f_id_dec_var_prime
+    f_id_dec_var : ID pn_add_var pn_module_definition_4_2 '[' CTE_INT ']' pn_register_local_array_var f_id_dec_var_prime
+	    | ID pn_add_var pn_module_definition_4_2 pn_register_local_var f_id_dec_var_prime
     '''
     #print(t[1])
 
 def p_f_id_dec_var_prime(t):
     '''
-    f_id_dec_var_prime : ',' ID pn_add_var pn_module_definition_4_2 '[' CTE_INT ']' f_id_dec_var_prime
-        | ',' ID pn_add_var pn_module_definition_4_2 f_id_dec_var_prime
+    f_id_dec_var_prime : ',' ID pn_add_var pn_module_definition_4_2 '[' CTE_INT ']' pn_register_local_array_var f_id_dec_var_prime
+        | ',' ID pn_add_var pn_module_definition_4_2 pn_register_local_var f_id_dec_var_prime
         | null
     '''
 
@@ -137,14 +137,14 @@ def p_func_return(t):
 
 def p_def_func_prime(t):
     '''
-    def_func_prime : FUNCTION tipos_func ID pn_set_scope pn_set_aritmetic_expressions_scope pn_module_definition_1_1 '(' tipos ID pn_add_var pn_module_definition_2_and_3_part_2 param_prime ')' func_dec_var '{' est est_prime func_return '}' pn_module_definition_6 pn_module_definition_7 def_func_prime
-        | FUNCTION tipos_func ID pn_set_scope pn_set_aritmetic_expressions_scope pn_module_definition_1_1 '(' ')' func_dec_var '{' est est_prime func_return '}' pn_module_definition_6 pn_module_definition_7 def_func_prime
-        | null
+    def_func_prime : pn_scope_temporals_restart FUNCTION tipos_func ID pn_set_scope pn_set_aritmetic_expressions_scope pn_module_definition_1_1 '(' tipos ID pn_add_var pn_module_definition_2_and_3_part_2 pn_register_param_as_local param_prime ')' func_dec_var '{' est est_prime func_return '}' pn_module_definition_6 pn_module_definition_7 pn_reset_local_and_temporal_scopes def_func_prime
+        | pn_scope_temporals_restart FUNCTION tipos_func ID pn_set_scope pn_set_aritmetic_expressions_scope pn_module_definition_1_1 '(' ')' func_dec_var '{' est est_prime func_return '}' pn_module_definition_6 pn_module_definition_7 pn_reset_local_and_temporal_scopes def_func_prime
+        | null pn_reset_local_and_temporal_scopes
     '''
 
 def p_impl_main(t):
     '''
-    impl_main : MAIN pn_set_aritmetic_expressions_scope_global pn_start_of_main '(' ')' '{' est est_prime '}'
+    impl_main : MAIN pn_set_aritmetic_expressions_scope_global pn_start_of_main '(' ')' pn_scope_temporals_restart '{' est est_prime '}'
     '''
 
 
@@ -177,6 +177,8 @@ def p_est_asig(t):
      est_asig : ID pn_sequential_statute_1 '=' pn_sequential_statute_2 hiper_exp pn_sequential_statute_3 ';'
         | ID pn_sequential_statute_1 '[' hiper_exp ']' '=' pn_sequential_statute_2 hiper_exp pn_sequential_statute_3 ';'
     '''
+     print("TEST DE ASIGNACION T[0]:")
+     print()
      
 def p_hiper_exp(t):
      '''
@@ -239,8 +241,8 @@ def p_factor(t):
      
 def p_ctes(t):
      '''
-     ctes : CTE_INT
-        | CTE_FLOAT
+     ctes : CTE_INT pn_add_int_cte pn_register_int_constant 
+        | CTE_FLOAT pn_add_float_cte pn_register_float_constant
         | CTE_CHAR
         | CTE_LETRERO
     '''
@@ -333,9 +335,6 @@ def p_est_rep_no_con_id(t):
      
     
 
-    
-
-
 
 
 def p_null(t):
@@ -415,6 +414,9 @@ def p_pn_set_aritmetic_expressions_scope(t):
      #print("actualAitmeticScope: " + actualAritmeticScope + "/////////////////////////////////")
      np.setActualAritmeticScope(t[-2])
 
+#////////////////////////////////////////////
+#///////ADDRESS TO OPERANDS//////////////////
+#////////////////////////////////////////////
 def p_pn_aritmetic_expressions_1(t):
      '''
      pn_aritmetic_expressions_1 : null
@@ -437,6 +439,13 @@ def p_pn_aritmetic_expressions_1(t):
      if(varInDictionary[0] == True):
         np.addToOperandsStack(t[-1])
         np.addToTypesStack(varInDictionary[1])
+
+        #A PARTIR DE AQUÍ:
+        #////////////////
+        #////////////////
+        #////////////////
+        np.processGlobalAndLocalOnAddressOperandStack(varInDictionary[1], t[-1])
+
 
 def p_pn_aritmetic_expressions_2(t):
      '''
@@ -504,6 +513,25 @@ def p_pn_aritmetic_expressions_9(t):
      #np.addToOperatorsStack(t[-1])
      np.processRelationalOperatorPostExpresion()
 
+#////////////////////////////////////////////
+#///////ADDRESS TO INT CTE///////////////////
+#////////////////////////////////////////////
+def p_pn_add_int_cte(t):
+     '''
+     pn_add_int_cte : null
+     '''
+     np.addIntCteToOperands(t[-1])
+     np.processIntCteOnAddressOperandsStack(t[-1])
+
+#////////////////////////////////////////////
+#///////ADDRESS TO FLOAT CTE/////////////////
+#////////////////////////////////////////////
+def p_pn_add_float_cte(t):
+     '''
+     pn_add_float_cte : null
+     '''
+     np.addFloatCteToOperands(t[-1])
+     np.processFloatCteOnAddressOperandsStack(t[-1])
 
 
 def p_pn_aritmetic_expressions_print(t):
@@ -520,6 +548,9 @@ def p_pn_aritmetic_expressions_print(t):
 #==============================================================================
 #==============================================================================
 
+#////////////////////////////////////////////
+#///////ADDRESS TO SEQUENTIAL OPERAND////////
+#////////////////////////////////////////////
 def p_pn_sequential_statute_1(t):
      '''
      pn_sequential_statute_1 : null
@@ -531,6 +562,12 @@ def p_pn_sequential_statute_1(t):
      if(varInDictionary[0] == True):
         np.addToOperandsStack(t[-1])
         np.addToTypesStack(varInDictionary[1])
+
+        #A PARTIR DE AQUÍ:
+        #////////////////
+        #////////////////
+        #////////////////
+        np.processGlobalAndLocalOnAddressOperandStack(varInDictionary[1], t[-1])
 
 def p_pn_sequential_statute_2(t):
      '''
@@ -727,6 +764,106 @@ def p_pn_end_of_program(t):
     '''
     np.processEndOfProgram()
 
+#==============================================================================
+
+def p_pn_scope_temporals_restart(t):
+    '''
+    pn_scope_temporals_restart : null
+    '''
+    np.processTemporalsRestartOnChangeOfScope()
+
+#==============================================================================
+#==============================================================================
+#==============================================================================
+#==============================================================================
+#==============================================================================
+#==============================================================================
+#==============================================================================
+#==============================================================================
+#==============================================================================
+#==============================================================================
+
+def p_pn_set_actual_global_type_to_register_on_virtual_memory(t):
+    '''
+    pn_set_actual_global_type_to_register_on_virtual_memory : null
+    '''
+    np.processGlobalVarTypeOnVirtualMemory(t[-3])
+
+def p_pn_register_global_var(t):
+    '''
+    pn_register_global_var : null
+    '''
+    np.processGlobalVarOnVirtual(t[-2])
+    #np.processGlobalVarTypeOnVirtualMemory(t[-3])
+
+def p_pn_register_global_array_var(t):
+    '''
+    pn_register_global_array_var : null
+    '''
+    np.processGlobalVarOnVirtual(t[-5])
+    #np.processGlobalVarTypeOnVirtualMemory(t[-3])
+
+
+
+def p_pn_set_actual_local_type_to_register_on_virtual_memory(t):
+    '''
+    pn_set_actual_local_type_to_register_on_virtual_memory : null
+    '''
+    np.processLocallVarTypeOnVirtualMemory(t[-3])
+
+def p_pn_register_local_var(t):
+    '''
+    pn_register_local_var : null
+    '''
+    np.processLocalVarOnVirtual(t[-3])
+    #np.processGlobalVarTypeOnVirtualMemory(t[-3])
+
+def p_pn_register_local_array_var(t):
+    '''
+    pn_register_local_array_var : null
+    '''
+    np.processLocalVarOnVirtual(t[-6])
+    #np.processGlobalVarTypeOnVirtualMemory(t[-3])
+
+
+
+def p_pn_set_param_type_to_register_on_vitual_memory(t):
+    '''
+    pn_set_param_type_to_register_on_vitual_memory : null
+    '''
+    np.processParamVarTypeOnVirtualMemory(t[-4])
+
+def p_pn_register_param_as_local(t):
+    '''
+    pn_register_param_as_local : null
+    '''
+    np.processFuncParamOnVirtualMemory(t[-3])
+
+
+
+def p_pn_reset_local_and_temporal_scopes(t):
+    '''
+    pn_reset_local_and_temporal_scopes : null
+    '''
+    np.processResetOfLocalAndTemporalScope()
+    #np.processGlobalVarTypeOnVirtualMemory(t[-3])
+
+
+
+def p_pn_register_int_constant(t):
+    '''
+    pn_register_int_constant : null
+    '''
+    newAddress = np.processIntCteOnVirtualMemory(t[-2])
+
+def p_pn_register_float_constant(t):
+    '''
+    pn_register_float_constant : null
+    '''
+    newAddress = np.processFloatCteOnVirtualMemory(t[-2])
+    
+
+
 
 
 
@@ -745,6 +882,22 @@ def p_print_funcs_data(t):
     print("#==============================================================================")
 
 
+def p_print_virtual_memory_data(t):
+    '''
+    print_virtual_memory_data : null
+    '''
+    print("FINAL DICTONARIES://///////////////////////////////////////////////")
+    print(" ")
+    np.npPrintVirtualMemory()
+
+
+
 
 
 parser = yacc.yacc()
+    
+
+
+
+
+
