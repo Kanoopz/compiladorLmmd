@@ -184,10 +184,19 @@ class NP:
                         strTemporal = str(self.temporalsCounter)
                         string = "t" + strTemporal
 
+                        #=============================================================================
+                        ##############################################################################
+                        #/////////////////////////////////////////////////////////////////////////////
+                        temporalAddress = virtualMemory.saveAddress('Temporals', resultingType, string)
+                        print("TemporalAddress: ", temporalAddress)
+                        #/////////////////////////////////////////////////////////////////////////////
+                        ##############################################################################
+                        #=============================================================================
+
                         #/////////////////////////////////////////////////////////
                         quadruple = [operator, leftOperand, rightOperand, string]
                         #/////////////////////////////////////////////////////////
-                        addrQuadruple = [operator, leftAddressOperand, rightAddressOperand, string]
+                        addrQuadruple = [operator, leftAddressOperand, rightAddressOperand, temporalAddress]
                         #/////////////////////////////////////////////////////////
 
                         #////////////////////////////////////////////////////////////
@@ -199,7 +208,7 @@ class NP:
                         #////////////////////////////////////////////////////////////
                         self.operandsStack.append(string)
                         #////////////////////////////////////////////////////////////
-                        self.addressOperandsStack.append(string)
+                        self.addressOperandsStack.append(temporalAddress)
                         #////////////////////////////////////////////////////////////
                         self.typesStack.append(resultingType)
 
@@ -286,10 +295,27 @@ class NP:
                         strTemporal = str(self.temporalsCounter)
                         string = "t" + strTemporal
 
+
+
+
+
+                        #=============================================================================
+                        ##############################################################################
+                        #/////////////////////////////////////////////////////////////////////////////
+                        temporalAddress = virtualMemory.saveAddress('Temporals', resultingType, string)
+                        print("TemporalAddress: ", temporalAddress)
+                        #/////////////////////////////////////////////////////////////////////////////
+                        ##############################################################################
+                        #=============================================================================
+
+
+
+
+
                         #////////////////////////////////////////////////////////////
                         quadruple = [operator, leftOperand, rightOperand, string]
                         #////////////////////////////////////////////////////////////
-                        addrQuadruple = [operator, leftAddressOperand, rightAddressOperand, string]
+                        addrQuadruple = [operator, leftAddressOperand, rightAddressOperand, temporalAddress]
                         #////////////////////////////////////////////////////////////
 
                         #////////////////////////////////////////////////////////////
@@ -301,7 +327,7 @@ class NP:
                         #////////////////////////////////////////////////////////////
                         self.operandsStack.append(string)
                         #////////////////////////////////////////////////////////////
-                        self.addressOperandsStack.append(string)
+                        self.addressOperandsStack.append(temporalAddress)
                         #////////////////////////////////////////////////////////////
                         self.typesStack.append(resultingType)
 
@@ -389,10 +415,27 @@ class NP:
                         strTemporal = str(self.temporalsCounter)
                         string = "t" + strTemporal
 
+
+
+
+
+                        #=============================================================================
+                        ##############################################################################
+                        #/////////////////////////////////////////////////////////////////////////////
+                        temporalAddress = virtualMemory.saveAddress('Temporals', resultingType, string)
+                        print("TemporalAddress: ", temporalAddress)
+                        #/////////////////////////////////////////////////////////////////////////////
+                        ##############################################################################
+                        #=============================================================================
+
+
+
+
+
                         #////////////////////////////////////////////////////////////
                         quadruple = [operator, leftOperand, rightOperand, string]
                         #////////////////////////////////////////////////////////////
-                        addrQuadruple = [operator, leftAddressOperand, rightAddressOperand, string]
+                        addrQuadruple = [operator, leftAddressOperand, rightAddressOperand, temporalAddress]
                         #////////////////////////////////////////////////////////////
 
 
@@ -405,7 +448,7 @@ class NP:
                         #////////////////////////////////////////////////////////////
                         self.operandsStack.append(string)
                         #////////////////////////////////////////////////////////////
-                        self.addressOperandsStack.append(string)
+                        self.addressOperandsStack.append(temporalAddress)
                         #////////////////////////////////////////////////////////////
                         self.typesStack.append(resultingType)
 
@@ -490,10 +533,27 @@ class NP:
                     strTemporal = str(self.temporalsCounter)
                     string = "t" + strTemporal
 
+
+
+
+
+                    #=============================================================================
+                    ##############################################################################
+                    #/////////////////////////////////////////////////////////////////////////////
+                    temporalAddress = virtualMemory.saveAddress('Temporals', resultingType, string)
+                    print("TemporalAddress: ", temporalAddress)
+                    #/////////////////////////////////////////////////////////////////////////////
+                    ##############################################################################
+                    #=============================================================================
+
+
+
+
+
                     #////////////////////////////////////////////////////////////
                     quadruple = [operator, leftOperand, rightOperand, string]
                     #////////////////////////////////////////////////////////////
-                    addrQuadruple = [operator, leftAddressOperand, rightAddressOperand, string]
+                    addrQuadruple = [operator, leftAddressOperand, rightAddressOperand, temporalAddress]
                     #////////////////////////////////////////////////////////////
 
 
@@ -506,7 +566,7 @@ class NP:
                     #////////////////////////////////////////////////////////////
                     self.operandsStack.append(string)
                     #////////////////////////////////////////////////////////////
-                    self.addressOperandsStack.append(string)
+                    self.addressOperandsStack.append(temporalAddress)
                     #////////////////////////////////////////////////////////////
                     self.typesStack.append(resultingType)
 
@@ -598,10 +658,27 @@ class NP:
                     strTemporal = str(self.temporalsCounter)
                     string = "t" + strTemporal
 
+
+
+
+
+                    #=============================================================================
+                    ##############################################################################
+                    #/////////////////////////////////////////////////////////////////////////////
+                    temporalAddress = virtualMemory.saveAddress('Temporals', resultingType, string)
+                    print("TemporalAddress: ", temporalAddress)
+                    #/////////////////////////////////////////////////////////////////////////////
+                    ##############################################################################
+                    #=============================================================================
+
+
+
+
+
                     #////////////////////////////////////////////////////////////
                     quadruple = [operator, leftOperand, rightOperand, string]
                     #////////////////////////////////////////////////////////////
-                    addrQuadruple = [operator, leftAddressOperand, rightAddressOperand, string]
+                    addrQuadruple = [operator, leftAddressOperand, rightAddressOperand, temporalAddress]
                     #////////////////////////////////////////////////////////////
 
 
@@ -614,7 +691,7 @@ class NP:
                     #////////////////////////////////////////////////////////////
                     self.operandsStack.append(string)
                     #////////////////////////////////////////////////////////////
-                    self.addressOperandsStack.append(string)
+                    self.addressOperandsStack.append(temporalAddress)
                     #////////////////////////////////////////////////////////////
                     self.typesStack.append(resultingType)
 
@@ -678,10 +755,27 @@ class NP:
                 strTemporal = str(self.temporalsCounter)
                 string = "t" + strTemporal
 
+
+
+
+
+                #=============================================================================
+                ##############################################################################
+                #/////////////////////////////////////////////////////////////////////////////
+                temporalAddress = virtualMemory.saveAddress('Temporals', resultingType, string)
+                print("TemporalAddress: ", temporalAddress)
+                #/////////////////////////////////////////////////////////////////////////////
+                ##############################################################################
+                #=============================================================================
+
+
+
+
+
                 #////////////////////////////////////////////////////////////
                 quadruple = [operator, leftOperand, rightOperand, string]
                 #////////////////////////////////////////////////////////////
-                addrQuadruple = [operator, leftAddressOperand, rightAddressOperand, string]
+                addrQuadruple = [operator, leftAddressOperand, rightAddressOperand, temporalAddress]
                 #////////////////////////////////////////////////////////////
 
 
@@ -694,7 +788,7 @@ class NP:
                 #////////////////////////////////////////////////////////////
                 self.operandsStack.append(string)
                 #////////////////////////////////////////////////////////////
-                self.addressOperandsStack.append(string)
+                self.addressOperandsStack.append(temporalAddress)
                 #////////////////////////////////////////////////////////////
                 self.typesStack.append(resultingType)
 
@@ -764,10 +858,27 @@ class NP:
                     strTemporal = str(self.temporalsCounter)
                     string = "t" + strTemporal
 
+
+
+
+
+                    #=============================================================================
+                    ##############################################################################
+                    #/////////////////////////////////////////////////////////////////////////////
+                    temporalAddress = virtualMemory.saveAddress('Temporals', resultingType, string)
+                    print("TemporalAddress: ", temporalAddress)
+                    #/////////////////////////////////////////////////////////////////////////////
+                    ##############################################################################
+                    #=============================================================================
+
+
+
+
+
                     #////////////////////////////////////////////////////////////
                     quadruple = [operator, leftOperand, rightOperand, string]
                     #////////////////////////////////////////////////////////////
-                    addrQuadruple = [operator, leftAddressOperand, rightAddressOperand, string]
+                    addrQuadruple = [operator, leftAddressOperand, rightAddressOperand, temporalAddress]
                     #////////////////////////////////////////////////////////////
 
 
@@ -780,7 +891,7 @@ class NP:
                     #////////////////////////////////////////////////////////////
                     self.operandsStack.append(string)
                     #////////////////////////////////////////////////////////////
-                    self.addressOperandsStack.append(string)
+                    self.addressOperandsStack.append(temporalAddress)
                     #////////////////////////////////////////////////////////////
                     self.typesStack.append(resultingType)
 
@@ -993,10 +1104,27 @@ class NP:
                     strTemporal = str(self.temporalsCounter)
                     string = "t" + strTemporal
 
+
+
+
+
+                    #=============================================================================
+                    ##############################################################################
+                    #/////////////////////////////////////////////////////////////////////////////
+                    temporalAddress = virtualMemory.saveAddress('Temporals', resultingType, string)
+                    print("TemporalAddress: ", temporalAddress)
+                    #/////////////////////////////////////////////////////////////////////////////
+                    ##############################################################################
+                    #=============================================================================
+
+
+
+
+
                     #////////////////////////////////////////////////////////////
                     quadruple = [operator, leftOperand, rightOperand, string]
                     #////////////////////////////////////////////////////////////
-                    addrQuadruple = [operator, leftAddressOperand, rightAddressOperand, string]
+                    addrQuadruple = [operator, leftAddressOperand, rightAddressOperand, temporalAddress]
                     #////////////////////////////////////////////////////////////
 
 
@@ -1009,7 +1137,7 @@ class NP:
                     #////////////////////////////////////////////////////////////
                     self.operandsStack.append(string)
                     #////////////////////////////////////////////////////////////
-                    self.addressOperandsStack.append(string)
+                    self.addressOperandsStack.append(temporalAddress)
                     #////////////////////////////////////////////////////////////
                     self.typesStack.append(resultingType)
 
@@ -1715,10 +1843,27 @@ class NP:
                     strTemporal = str(self.temporalsCounter)
                     string = "t" + strTemporal
 
+
+
+
+
+                    #=============================================================================
+                    ##############################################################################
+                    #/////////////////////////////////////////////////////////////////////////////
+                    temporalAddress = virtualMemory.saveAddress('Temporals', resultingType, string)
+                    print("TemporalAddress: ", temporalAddress)
+                    #/////////////////////////////////////////////////////////////////////////////
+                    ##############################################################################
+                    #=============================================================================
+
+
+
+
+
                     #////////////////////////////////////////////////////////////
                     quadruple = [operator, leftOperand, rightOperand, string]
                     #////////////////////////////////////////////////////////////
-                    addrQuadruple = [operator, leftAddressOperand, rightAddressOperand, string]
+                    addrQuadruple = [operator, leftAddressOperand, rightAddressOperand, temporalAddress]
                     #////////////////////////////////////////////////////////////
 
 
@@ -1731,7 +1876,7 @@ class NP:
                     #////////////////////////////////////////////////////////////
                     self.operandsStack.append(string)
                     #////////////////////////////////////////////////////////////
-                    self.addressOperandsStack.append(string)
+                    self.addressOperandsStack.append(temporalAddress)
                     #////////////////////////////////////////////////////////////
                     self.typesStack.append(resultingType)
 
