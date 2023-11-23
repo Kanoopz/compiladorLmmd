@@ -7,16 +7,7 @@ scopedDeclaredVars = declaredScopedVars()
 from neuralgicPoint import NP
 np = NP()
 
-
-
-#operandsStack = []
-#typesStack = []
-#operatorsStack = []
-#actualAritmeticScope = 'noInitialized'
-
-#temporalsCounter = 0
-#quadruplesDictionary = {}
-
+resultinQuadruplesDictionary = {}
 
 
 def p_programa(t):
@@ -1007,7 +998,19 @@ def p_print_arrays_index_data(t):
 #==============================================================================
 #==============================================================================
 
+# def p_get_resulting_quadruples(t):
+#     '''
+#     get_resulting_quadruples : null
+#     '''
+#     quadruples = np.getResultingQuadruples()
+
+resultinQuadruplesDictionary = np.getResultingQuadruples()
+constantsMemoryAddresses = np.getConstantsMemory()
+    
+
 parser = yacc.yacc()
+
+
     
 
 
