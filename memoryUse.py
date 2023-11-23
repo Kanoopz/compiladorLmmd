@@ -576,6 +576,9 @@ class useOfMemory:
         self.vars_memoryAddresses_Dictionary['Temporals']['char'] = {}
         self.vars_memoryAddresses_Dictionary['Temporals']['bool'] = {}
 
+    def getConstantsVirtualMemory(self):
+        constants = self.memoryAddresses_vars_Dictionary['Constants']
+        return constants
 
 
     def printDictionaries(self):
