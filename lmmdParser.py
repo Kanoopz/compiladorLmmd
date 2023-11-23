@@ -21,7 +21,7 @@ np = NP()
 
 def p_programa(t):
     '''
-    programa : PROGRAM ID ';' pn_start_of_program pn_set_global dec_var def_func pn_reset_local_and_temporal_scopes impl_main pn_end_of_program pn_aritmetic_expressions_print pn_get_vars_table print_funcs_data print_virtual_memory_data
+    programa : PROGRAM ID ';' pn_start_of_program pn_set_global dec_var def_func pn_reset_local_and_temporal_scopes pn_passArrayDataToNp impl_main pn_end_of_program pn_aritmetic_expressions_print pn_get_vars_table print_funcs_data print_virtual_memory_data print_arrays_index_data
     '''
 
 def p_dec_var(t):
@@ -31,22 +31,22 @@ def p_dec_var(t):
 
 def p_tipos(t):
     '''
-    tipos : INT pn_set_type pn_module_definition_2_and_3_part_1 pn_set_actual_global_type_to_register_on_virtual_memory pn_set_param_type_to_register_on_vitual_memory
-	    | FLOAT pn_set_type pn_module_definition_2_and_3_part_1 pn_set_actual_global_type_to_register_on_virtual_memory pn_set_param_type_to_register_on_vitual_memory
-	    | CHAR pn_set_type pn_module_definition_2_and_3_part_1 pn_set_actual_global_type_to_register_on_virtual_memory pn_set_param_type_to_register_on_vitual_memory
+    tipos : INT pn_set_type pn_module_definition_2_and_3_part_1 pn_set_actual_global_type_to_register_on_virtual_memory pn_set_param_type_to_register_on_vitual_memory pn_set_processing_global_array_type pn_set_processing_local_array_type
+	    | FLOAT pn_set_type pn_module_definition_2_and_3_part_1 pn_set_actual_global_type_to_register_on_virtual_memory pn_set_param_type_to_register_on_vitual_memory pn_set_processing_global_array_type pn_set_processing_local_array_type
+	    | CHAR pn_set_type pn_module_definition_2_and_3_part_1 pn_set_actual_global_type_to_register_on_virtual_memory pn_set_param_type_to_register_on_vitual_memory pn_set_processing_global_array_type pn_set_processing_local_array_type
     '''
     #print(t[1])
 
 def p_id_dec_var(t):
     '''
-    id_dec_var : ID pn_add_var '[' CTE_INT ']' pn_register_global_array_var id_dec_var_prime
+    id_dec_var : ID pn_add_var '[' CTE_INT ']' pn_register_global_array_var pn_add_array_to_var_table id_dec_var_prime
 	    | ID pn_add_var pn_register_global_var id_dec_var_prime 
     '''
     #print(t[1])
 
 def p_id_dec_var_prime(t):
     '''
-    id_dec_var_prime : ',' ID pn_add_var '[' CTE_INT ']' pn_register_global_array_var id_dec_var_prime
+    id_dec_var_prime : ',' ID pn_add_var '[' CTE_INT ']' pn_register_global_array_var pn_add_array_to_var_table id_dec_var_prime
         | ',' ID pn_add_var pn_register_global_var id_dec_var_prime
         | null
     '''
@@ -107,14 +107,14 @@ def p_f_tipos(t):
 
 def p_f_id_dec_var(t):
     '''
-    f_id_dec_var : ID pn_add_var pn_module_definition_4_2 '[' CTE_INT ']' pn_register_local_array_var f_id_dec_var_prime
+    f_id_dec_var : ID pn_add_var pn_module_definition_4_2 '[' CTE_INT ']' pn_register_local_array_var pn_add_array_to_var_table_2 f_id_dec_var_prime
 	    | ID pn_add_var pn_module_definition_4_2 pn_register_local_var f_id_dec_var_prime
     '''
     #print(t[1])
 
 def p_f_id_dec_var_prime(t):
     '''
-    f_id_dec_var_prime : ',' ID pn_add_var pn_module_definition_4_2 '[' CTE_INT ']' pn_register_local_array_var f_id_dec_var_prime
+    f_id_dec_var_prime : ',' ID pn_add_var pn_module_definition_4_2 '[' CTE_INT ']' pn_register_local_array_var pn_add_array_to_var_table_2 f_id_dec_var_prime
         | ',' ID pn_add_var pn_module_definition_4_2 pn_register_local_var f_id_dec_var_prime
         | null
     '''
@@ -174,8 +174,8 @@ def p_est_prime(t):
 
 def p_est_asig(t):
      '''
-     est_asig : ID pn_sequential_statute_1 '=' pn_sequential_statute_2 hiper_exp pn_sequential_statute_3 ';'
-        | ID pn_sequential_statute_1 '[' hiper_exp ']' '=' pn_sequential_statute_2 hiper_exp pn_sequential_statute_3 ';'
+     est_asig : ID pn_sequential_statute_1 pn_array_invocation '[' pn_array_index_start hiper_exp pn_array_index_end ']' '=' pn_sequential_statute_2 hiper_exp pn_sequential_statute_3 ';'
+        | ID pn_sequential_statute_1 '=' pn_sequential_statute_2 hiper_exp pn_sequential_statute_3 ';'
     '''
      print("TEST DE ASIGNACION T[0]:")
      print()
@@ -232,10 +232,10 @@ def p_factor_prime(t):
 
 def p_factor(t):
      '''
-     factor : ID pn_aritmetic_expressions_1
-        | ID pn_aritmetic_expressions_1 '[' hiper_exp ']'
+     factor : est_llam_func
+        | ID pn_aritmetic_expressions_1 pn_array_invocation_2 '[' pn_array_index_start hiper_exp pn_array_index_end ']'
+        | ID pn_aritmetic_expressions_1
         | ctes
-        | est_llam_func
         | sub_exp
      '''
      
@@ -254,8 +254,8 @@ def p_sub_exp(t):
      
 def p_est_llam_func(t):
      '''
-     est_llam_func : ID pn_function_calling_1 '(' llam_func_param ')' pn_function_calling_6 ';'
-        | ID pn_function_calling_1 '(' llam_func_param ')' pn_function_calling_6
+     est_llam_func : ID pn_function_calling_1 '(' llam_func_param ')' pn_function_calling_6
+        | ID pn_function_calling_1 '(' llam_func_param ')' pn_function_calling_6 ';'
     '''
      
 def p_llam_func_param(t):
@@ -277,15 +277,15 @@ def p_lectura(t):
      
 def p_llam_lect_param(t):
      '''
-     llam_lect_param : ID pn_read_save_ID pn_read llam_lect_param_prime
-        | ID pn_read_save_ID pn_read '[' hiper_exp ']' llam_lect_param_prime
+     llam_lect_param : ID pn_read_save_ID pn_array_invocation_3 '[' pn_array_index_start hiper_exp pn_array_index_end_2 ']' pn_read llam_lect_param_prime
+        | ID pn_read_save_ID pn_read llam_lect_param_prime
         | null
     '''
      
 def p_llam_lect_param_prime(t):
      '''
-     llam_lect_param_prime : ',' ID pn_read_save_ID pn_read llam_lect_param_prime
-        | ',' ID pn_read_save_ID pn_read '[' hiper_exp ']' llam_lect_param_prime
+     llam_lect_param_prime : ',' ID pn_read_save_ID pn_array_invocation_3 '[' pn_array_index_start hiper_exp pn_array_index_end_2 ']' pn_read llam_lect_param_prime
+        | ',' ID pn_read_save_ID pn_read llam_lect_param_prime
         | null
     '''
      
@@ -622,7 +622,6 @@ def p_pn_add_pre_process_setup_write(t):
 
 #==============================================================================
 
-
 def p_pn_decision_conditional_statute_1(t):
      '''
      pn_decision_conditional_statute_1 : null
@@ -800,10 +799,10 @@ def p_pn_register_global_array_var(t):
     '''
     pn_register_global_array_var : null
     '''
-    np.processGlobalVarOnVirtual(t[-5])
+    #np.processGlobalVarOnVirtual(t[-5])
     #np.processGlobalVarTypeOnVirtualMemory(t[-3])
 
-
+#==============================================================================
 
 def p_pn_set_actual_local_type_to_register_on_virtual_memory(t):
     '''
@@ -822,10 +821,10 @@ def p_pn_register_local_array_var(t):
     '''
     pn_register_local_array_var : null
     '''
-    np.processLocalVarOnVirtual(t[-6])
+    #np.processLocalVarOnVirtual(t[-6])
     #np.processGlobalVarTypeOnVirtualMemory(t[-3])
 
-
+#==============================================================================
 
 def p_pn_set_param_type_to_register_on_vitual_memory(t):
     '''
@@ -839,7 +838,7 @@ def p_pn_register_param_as_local(t):
     '''
     np.processFuncParamOnVirtualMemory(t[-3])
 
-
+#==============================================================================
 
 def p_pn_reset_local_and_temporal_scopes(t):
     '''
@@ -848,7 +847,7 @@ def p_pn_reset_local_and_temporal_scopes(t):
     np.processResetOfLocalAndTemporalScope()
     #np.processGlobalVarTypeOnVirtualMemory(t[-3])
 
-
+#==============================================================================
 
 def p_pn_register_int_constant(t):
     '''
@@ -862,11 +861,111 @@ def p_pn_register_float_constant(t):
     '''
     newAddress = np.processFloatCteOnVirtualMemory(t[-2])
     
+#==============================================================================
+#==============================================================================
+#==============================================================================
+#==============================================================================
+#==============================================================================
+#==============================================================================
+#==============================================================================
+#==============================================================================
+#==============================================================================
+#==============================================================================
+
+def p_pn_add_array_to_var_table(t):
+    '''
+    pn_add_array_to_var_table : null
+    '''
+    arraysDictionary = scopedDeclaredVars.addArray(t[-6], t[-3])
+    #CREAR ALGUN METODO PARA OBTENER EL SCOPE ACTUAL DE LA CLASE SCOPEDDECLAREDVARS
+    scope = scopedDeclaredVars.getActualScope()
+    np.setArraysDataDictionary(arraysDictionary)
+    np.setArrayIndexData(t[-6], t[-3], scope)
+
+def p_pn_add_array_to_var_table_2(t):
+    '''
+    pn_add_array_to_var_table_2 : null
+    '''
+    arraysDictionary = scopedDeclaredVars.addArray(t[-7], t[-3])
+    scope = scopedDeclaredVars.getActualScope()
+    np.setArraysDataDictionary(arraysDictionary)
+    np.setArrayIndexData(t[-7], t[-3], scope)
+
+def p_pn_set_processing_global_array_type(t):
+    '''
+    pn_set_processing_global_array_type : null
+    '''
+    np.setProcessingGlobalArrayType(t[-5])
 
 
+def p_pn_set_processing_local_array_type(t):
+    '''
+    pn_set_processing_local_array_type : null
+    '''
+    np.setProcessingLocalArrayType(t[-6])
 
+#==============================================================================
 
+def p_pn_array_invocation(t):
+    '''
+    pn_array_invocation : null
+    '''
+    scope = np.getActualAritmeticScope()
+    arrayData = scopedDeclaredVars.checkArray(t[-2], scope)
 
+def p_pn_array_invocation_2(t):
+    '''
+    pn_array_invocation_2 : null
+    '''
+    scope = np.getActualAritmeticScope()
+    arrayData = scopedDeclaredVars.checkArray(t[-2], scope)
+    ##FALTA HACERLE EL APPEND YA VERIFICADO (ES LO QUE HACE CHECKARRAY) JUNTO CON 
+
+##ESTE ES PARA LOS PARAMETROS DE LECTURA####
+def p_pn_array_invocation_3(t):
+    '''
+    pn_array_invocation_3 : null
+    '''
+    scope = np.getActualAritmeticScope()
+    arrayData = scopedDeclaredVars.checkArray(t[-2], scope)
+
+def p_pn_array_index_start(t):
+    '''
+    pn_array_index_start : null
+    '''
+    np.preProcessArrayInvocation()
+
+def p_pn_array_index_end(t):
+    '''
+    pn_array_index_end : null
+    '''
+    np.processEndOfExpArrayInvocation(t[-6])
+
+def p_pn_array_index_end_2(t):
+    '''
+    pn_array_index_end_2 : null
+    '''
+    np.processEndOfExpArrayInvocation(t[-7])
+
+#==============================================================================
+
+def p_pn_passArrayDataToNp(t):
+    '''
+    pn_passArrayDataToNp : null
+    '''
+    arraysData = scopedDeclaredVars.getArrayDic()
+    np.setArraysDataDictionary(arraysData)
+
+#==============================================================================
+#==============================================================================
+#==============================================================================
+#==============================================================================
+#==============================================================================
+#==============================================================================
+#==============================================================================
+#==============================================================================
+#==============================================================================
+#==============================================================================
 
 def p_print_funcs_data(t):
     '''
@@ -881,7 +980,6 @@ def p_print_funcs_data(t):
     print("#==============================================================================")
     print("#==============================================================================")
 
-
 def p_print_virtual_memory_data(t):
     '''
     print_virtual_memory_data : null
@@ -890,9 +988,24 @@ def p_print_virtual_memory_data(t):
     print(" ")
     np.npPrintVirtualMemory()
 
+def p_print_arrays_index_data(t):
+    '''
+    print_arrays_index_data : null
+    '''
+    print(" ")
+    print("ARRAYS INDEX DATA://///////////////////////////////////////////////")
+    np.printArraysIndexData()
 
-
-
+#==============================================================================
+#==============================================================================
+#==============================================================================
+#==============================================================================
+#==============================================================================
+#==============================================================================
+#==============================================================================
+#==============================================================================
+#==============================================================================
+#==============================================================================
 
 parser = yacc.yacc()
     
