@@ -369,6 +369,8 @@ class useOfMemory:
         else:
             return [varInDictionary, varId]
         
+
+        
     def checkIfCte(self, type, cte):
         varInDictionary = self.vars_memoryAddresses_Dictionary['Constants'][type].get(cte, 'notDeclared')
 
@@ -376,6 +378,171 @@ class useOfMemory:
             return [False, 0]
         else:
             return [True, varInDictionary]
+        
+
+
+    def saveArray(self, scope, type, varId, spaces):
+        isString = isinstance(spaces, str)
+
+        if(isString == True):
+            intSpaces = int(spaces)
+        else:
+            intSpaces = spaces
+
+        if(scope == 'Global'):
+            ############
+            # GLOBALES #
+            ############
+            #1-10000
+            # [ 0001 -> 3333 : ent ]
+            # [ 3334 -> 6666 : flot ]
+            # [ 6667 -> 10000 : car ]
+            if(type == 'int'):
+                if((self.globalIntCounter + intSpaces) == 3333 or (self.globalIntCounter + intSpaces) > 3333 or self.globalIntCounter == 3333 or self.globalIntCounter > 3333):
+                    raise TypeError("ERROR: REACHED MEMORY LIMIT FOR GLOBAL INT VARS.")
+                elif(self.globalIntCounter < 3333):
+                    exists = self.vars_memoryAddresses_Dictionary['Global']['int'].get(varId, 'notDeclared')
+    
+                    if(exists != 'notDeclared'):
+                        raise TypeError("ERROR: VAR ALREADY DECLARED IN THIS SCOPE (GLOBAL ON VORTUAL MEMORY). VAR ID:", varId)
+                    elif(exists =='notDeclared'):
+                        self.globalIntCounter = self.globalIntCounter + 1
+                        self.vars_memoryAddresses_Dictionary['Global']['int'][varId] = self.globalIntCounter
+                        self.memoryAddresses_vars_Dictionary['Global']['int'][self.globalIntCounter] = varId
+                        
+                        baseAddress =  self.globalIntCounter
+
+                        intSpaces = intSpaces - 1
+
+                        self.globalIntCounter = self.globalIntCounter + intSpaces
+
+                        return baseAddress
+            elif(type == 'float'):
+                if((self.globalFloatCounter + intSpaces) == 6666 or (self.globalFloatCounter + intSpaces) > 6666 or self.globalFloatCounter == 6666 or self.globalFloatCounter > 6666):
+                    raise TypeError("ERROR: REACHED MEMORY LIMIT FOR GLOBAL FLOAT VARS.")
+                elif(self.globalFloatCounter < 6666):
+                    exists = self.vars_memoryAddresses_Dictionary['Global']['float'].get(varId, 'notDeclared')
+    
+                    if(exists != 'notDeclared'):
+                        raise TypeError("ERROR: VAR ALREADY DECLARED IN THIS SCOPE (GLOBAL ON VORTUAL MEMORY). VAR ID:", varId)
+                    elif(exists =='notDeclared'):
+                        self.globalFloatCounter = self.globalFloatCounter + 1
+                        self.vars_memoryAddresses_Dictionary['Global']['float'][varId] = self.globalFloatCounter
+                        self.memoryAddresses_vars_Dictionary['Global']['float'][self.globalFloatCounter] = varId
+
+                        baseAddress =  self.globalFloatCounter
+
+                        intSpaces = intSpaces - 1
+
+                        self.globalFloatCounter = self.globalFloatCounter + intSpaces
+
+                        return baseAddress
+            elif(type == 'char'):
+                if((self.globalCharCounter + intSpaces) == 10000 or (self.globalCharCounter + intSpaces)  > 10000 or self.globalCharCounter == 10000 or self.globalCharCounter > 10000):
+                    raise TypeError("ERROR: REACHED MEMORY LIMIT FOR GLOBAL CHAR VARS (GLOBAL ON VORTUAL MEMORY).")
+                elif(self.globalCharCounter < 10000):
+                    exists = self.vars_memoryAddresses_Dictionary['Global']['char'].get(varId, 'notDeclared')
+    
+                    if(exists != 'notDeclared'):
+                        raise TypeError("ERROR: VAR ALREADY DECLARED IN THIS SCOPE. VAR ID:", varId)
+                    elif(exists =='notDeclared'):
+                        self.globalCharCounter = self.globalCharCounter + 1
+                        self.vars_memoryAddresses_Dictionary['Global']['char'][varId] = self.globalCharCounter
+                        self.memoryAddresses_vars_Dictionary['Global']['char'][self.globalCharCounter] = varId
+
+                        baseAddress =  self.globalCharCounter
+
+                        intSpaces = intSpaces - 1
+
+                        self.globalCharCounter = self.globalCharCounter + intSpaces
+
+                        return baseAddress
+            else:
+                raise TypeError("ERROR: INCORRECT GLOBAL VAR TYPE")
+        elif(scope == 'Locals'):
+            ###########
+            # LOCALES #
+            ###########
+            #10001-20000
+            # [ 10001 -> 13333 : ent ]
+            # [ 13334 -> 16666 : flot ]
+            # [ 16667 -> 20000 : car ]
+            if(type == 'int'):
+                if((self.localIntCounter + intSpaces) == 13333 or (self.localIntCounter + intSpaces) > 13333 or self.localIntCounter == 13333 or self.localIntCounter > 13333):
+                    raise TypeError("ERROR: REACHED MEMORY LIMIT FOR LOCAL INT VARS.")
+                elif(self.localIntCounter < 13333):
+                    exists = self.vars_memoryAddresses_Dictionary['Locals']['int'].get(varId, 'notDeclared')
+    
+                    if(exists != 'notDeclared'):
+                        raise TypeError("ERROR: VAR ALREADY DECLARED IN THIS SCOPE (LOCAL ON VORTUAL MEMORY). VAR ID:", varId)
+                    elif(exists =='notDeclared'):
+                        self.localIntCounter = self.localIntCounter + 1
+                        self.vars_memoryAddresses_Dictionary['Locals']['int'][varId] = self.localIntCounter
+                        self.memoryAddresses_vars_Dictionary['Locals']['int'][self.localIntCounter] = varId
+
+                        baseAddress =  self.localIntCounter
+
+                        intSpaces = intSpaces - 1
+
+                        self.localIntCounter = self.localIntCounter + intSpaces
+
+                        return baseAddress
+            elif(type == 'float'):
+                if((self.localFloatCounter + intSpaces) == 16666 or (self.localFloatCounter + intSpaces) > 16666 or self.localFloatCounter == 16666 or self.localFloatCounter > 16666):
+                    raise TypeError("ERROR: REACHED MEMORY LIMIT FOR LOCAL FLOAT VARS.")
+                elif(self.localFloatCounter < 16666):
+                    exists = self.vars_memoryAddresses_Dictionary['Locals']['float'].get(varId, 'notDeclared')
+    
+                    if(exists != 'notDeclared'):
+                        raise TypeError("ERROR: VAR ALREADY DECLARED IN THIS SCOPE (LOCAL ON VORTUAL MEMORY). VAR ID:", varId)
+                    elif(exists =='notDeclared'):
+                        self.localFloatCounter = self.localFloatCounter + 1
+                        self.vars_memoryAddresses_Dictionary['Locals']['float'][varId] = self.localFloatCounter
+                        self.memoryAddresses_vars_Dictionary['Locals']['float'][self.localFloatCounter] = varId
+                            
+                        baseAddress =  self.localFloatCounter
+
+                        intSpaces = intSpaces - 1
+
+                        self.localFloatCounter = self.localFloatCounter + intSpaces
+
+                        return baseAddress
+            elif(type == 'char'):
+                if((self.localCharCounter + intSpaces) == 20000 or (self.localCharCounter + intSpaces) > 20000 or self.localCharCounter == 20000 or self.localCharCounter > 20000):
+                    raise TypeError("ERROR: REACHED MEMORY LIMIT FOR LOCAL CHAR VARS.")
+                elif(self.localCharCounter < 20000):
+                    exists = self.vars_memoryAddresses_Dictionary['Locals']['char'].get(varId, 'notDeclared')
+    
+                    if(exists != 'notDeclared'):
+                        raise TypeError("ERROR: VAR ALREADY DECLARED IN THIS SCOPE (LOCAL ON VORTUAL MEMORY). VAR ID:", varId)
+                    elif(exists =='notDeclared'):
+                        self.localCharCounter = self.localCharCounter + 1
+                        self.vars_memoryAddresses_Dictionary['Locals']['char'][varId] = self.localCharCounter
+                        self.memoryAddresses_vars_Dictionary['Locals']['char'][self.localCharCounter] = varId
+                            
+                        baseAddress =  self.localCharCounter
+
+                        intSpaces = intSpaces - 1
+
+                        self.localCharCounter = self.localCharCounter + intSpaces
+
+                        return baseAddress
+            else:
+                raise TypeError("ERROR: INCORRECT LOCAL VAR TYPE")
+
+        
+
+
+
+
+
+
+
+
+
+
+        return baseAddress
+
 
 
 
