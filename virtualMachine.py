@@ -213,7 +213,85 @@ class VM:
 
                 print("PRINTING....")
                 print(storedValue)
-            
+            elif(actualQuadruple[0] == '>'):
+                leftOperand = actualQuadruple[1]
+                rightOperand = actualQuadruple[2]
+                memoryToStore = actualQuadruple[3]
+
+
+                leftValue = self.virtualMemoryDictionary.get(leftOperand)
+                rightValue = self.virtualMemoryDictionary.get(rightOperand)
+
+                ##########################################################
+                ##########################################################
+                valueToStore = (leftValue > rightValue)
+                ##########################################################
+                ##########################################################
+
+                self.virtualMemoryDictionary[memoryToStore] = valueToStore
+            elif(actualQuadruple[0] == '<'):
+                leftOperand = actualQuadruple[1]
+                rightOperand = actualQuadruple[2]
+                memoryToStore = actualQuadruple[3]
+
+
+                leftValue = self.virtualMemoryDictionary.get(leftOperand)
+                rightValue = self.virtualMemoryDictionary.get(rightOperand)
+
+                ##########################################################
+                ##########################################################
+                valueToStore = (leftValue < rightValue)
+                ##########################################################
+                ##########################################################
+
+                self.virtualMemoryDictionary[memoryToStore] = valueToStore
+            elif(actualQuadruple[0] == '=='):
+                leftOperand = actualQuadruple[1]
+                rightOperand = actualQuadruple[2]
+                memoryToStore = actualQuadruple[3]
+
+
+                leftValue = self.virtualMemoryDictionary.get(leftOperand)
+                rightValue = self.virtualMemoryDictionary.get(rightOperand)
+
+                ##########################################################
+                ##########################################################
+                valueToStore = (leftValue == rightValue)
+                ##########################################################
+                ##########################################################
+
+                self.virtualMemoryDictionary[memoryToStore] = valueToStore
+            elif(actualQuadruple[0] == '!='):
+                leftOperand = actualQuadruple[1]
+                rightOperand = actualQuadruple[2]
+                memoryToStore = actualQuadruple[3]
+
+
+                leftValue = self.virtualMemoryDictionary.get(leftOperand)
+                rightValue = self.virtualMemoryDictionary.get(rightOperand)
+
+                ##########################################################
+                ##########################################################
+                valueToStore = (leftValue != rightValue)
+                ##########################################################
+                ##########################################################
+
+                self.virtualMemoryDictionary[memoryToStore] = valueToStore
+            elif(actualQuadruple[0] == 'goToF'):
+                condition = actualQuadruple[1]
+                conditionValue = self.virtualMemoryDictionary.get(condition)
+
+                if(conditionValue == True):
+                    print("CONDITION TRUE.")
+                elif(conditionValue == False):
+                    print("CONDITION FALSE.")
+                    jump = actualQuadruple[3]
+                    
+                    self.actualQuadupleCounter = jump - 1
+            elif(actualQuadruple[0] == 'goTo'):
+                jump = actualQuadruple[3]
+                
+                self.actualQuadupleCounter = jump - 1
 
 
 
