@@ -122,7 +122,7 @@ def p_f_dec_var_prime(t):
 
 def p_func_return(t):
     '''
-    func_return : RETURN '(' hiper_exp ')' ';'
+    func_return : RETURN '(' pn_func_return_1 hiper_exp pn_func_return_2 ')' pn_func_return_3 ';'
         | null
     '''
 
@@ -165,8 +165,9 @@ def p_est_prime(t):
 
 def p_est_asig(t):
      '''
-     est_asig : ID pn_sequential_statute_1 pn_array_invocation '[' pn_array_index_start hiper_exp pn_array_index_end ']' '=' pn_sequential_statute_2 hiper_exp pn_sequential_statute_3 ';'
-        | ID pn_sequential_statute_1 '=' pn_sequential_statute_2 hiper_exp pn_sequential_statute_3 ';'
+     est_asig : ID pn_sequential_statute_1 '=' pn_sequential_statute_2 ID pn_function_calling_1 '(' llam_func_param ')' pn_function_calling_6 pn_function_calling_7 ';' pn_asignation_on_function_call 
+        | ID pn_sequential_statute_1 pn_array_invocation '[' pn_array_index_start hiper_exp pn_array_index_end ']' '=' pn_sequential_statute_2 hiper_exp pn_sequential_statute_3 ';'
+        | ID pn_sequential_statute_1 '=' pn_sequential_statute_2 hiper_exp pn_sequential_statute_3 ';' 
     '''
      print("TEST DE ASIGNACION T[0]:")
      print()
@@ -245,8 +246,8 @@ def p_sub_exp(t):
      
 def p_est_llam_func(t):
      '''
-     est_llam_func : ID pn_function_calling_1 '(' llam_func_param ')' pn_function_calling_6
-        | ID pn_function_calling_1 '(' llam_func_param ')' pn_function_calling_6 ';'
+     est_llam_func : ID pn_function_calling_1 '(' llam_func_param ')' pn_function_calling_6 pn_function_calling_7
+        | ID pn_function_calling_1 '(' llam_func_param ')' pn_function_calling_6 pn_function_calling_7 ';'
     '''
      
 def p_llam_func_param(t):
@@ -564,14 +565,21 @@ def p_pn_sequential_statute_2(t):
      '''
      pn_sequential_statute_2 : null
      '''
+     np.printPre("ASIGNACION PN2")
 
      np.addToOperatorsStack(t[-1])
+
+     np.printPost("ASIGNACION PN2")
 
 def p_pn_sequential_statute_3(t):
      '''
      pn_sequential_statute_3 : null
      '''
+     np.printPre("ASIGNACION PN3")
+
      np.processSequentialStatutePostStatute()
+
+     np.printPost("ASIGNACION PN3")
 
 #==============================================================================
 
@@ -708,6 +716,26 @@ def p_pn_module_definition_7(t):
 
 #==============================================================================
 
+def p_pn_func_return_1(t):
+    '''
+    pn_func_return_1 : null
+    '''
+    np.preProcessFuncReturnExpression()
+
+def p_pn_func_return_2(t):
+    '''
+    pn_func_return_2 : null
+    '''
+    np.processEndOfFuncReturnExpression()
+
+def p_pn_func_return_3(t):
+    '''
+    pn_func_return_3 : null
+    '''
+    np.processSaveFuncReturnValue()
+
+#==============================================================================
+
 def p_pn_function_calling_1(t):
     '''
     pn_function_calling_1 : null
@@ -733,6 +761,51 @@ def p_pn_function_calling_6(t):
     pn_function_calling_6 : null
     '''
     np.processEndOfFuncCall()
+
+def p_pn_function_calling_7(t):
+    '''
+    pn_function_calling_7 : null
+    '''
+    np.printPre("RETORNO VALORES")
+
+    result = np.processReturnValueOnFuncCall(t[-6])
+
+    print("result exists")
+    print(result)
+
+    if(result[0] == True):
+        type = result[1]
+        funcId = t[-6]
+
+        print("type: ", type)
+        print("id:", funcId)
+
+        data = np.getFuncAddress(type, funcId)
+
+        address = data[0]
+
+        print("AQUI DEBERIA SOLUCIONAR PROBLEMA")
+        print(data)
+
+        np.addToOperandsStack(funcId)
+        np.addToAddressOperandsStack(address)
+        np.addToTypesStack(type)
+
+    
+
+    np.printPost("RETORNO DE VALORES")
+
+def p_pn_asignation_on_function_call(t):
+    '''
+    pn_asignation_on_function_call : null
+    '''
+    np.printPre("ASIGNACION EN LLAMADA A FUNCION")
+
+    np.processAsignationOnReturnValueOnFuncCall()
+
+    np.printPost("ASIGNACION EN LLAMADA A FUNCION")
+
+
 
 #==============================================================================
 
@@ -1006,6 +1079,7 @@ def p_print_arrays_index_data(t):
 
 resultinQuadruplesDictionary = np.getResultingQuadruples()
 constantsMemoryAddresses = np.getConstantsMemory()
+funtionsDictionary = np.getFuncsDictionary()
     
 
 parser = yacc.yacc()
