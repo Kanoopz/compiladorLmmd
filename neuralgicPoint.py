@@ -74,6 +74,10 @@ class NP:
         self.globalProcessingArrayType = 'noInitialized'
         self.localProcessingArrayType = 'noInitialized'
 
+        self.asignationOnFuncCallPartOneVar = 'nothing'
+        self.asignationOnFunCallPartTwoVar = 'nothing'
+        self.asignationOnFunCallPartThreeVar = 'nothing'
+
 
     def setActualAritmeticScope(self, scope):
         self.actualAritmeticScope = scope
@@ -87,12 +91,20 @@ class NP:
         print("Adding ", operand)
         print("Result operandStack:", self.operandsStack)
 
+    def addToAddressOperandsStack(self, operand):
+        self.addressOperandsStack.append(operand)
+        print(" ")
+        print("Adding to address", operand)
+        print("Result addressOperandStack:", self.operandsStack)
+
     def addToOperatorsStack(self, operator):
         self.operatorsStack.append(operator) 
         print(" ")
         print("Processing: " + operator + "..........................................")
         print(self.operatorsStack)
         print(" ")
+
+
 
     def addIntCteToOperands(self, operand):
         self.operandsStack.append(operand)
@@ -1729,6 +1741,7 @@ class NP:
     def processNumberOfQuadruples(self):
         numberOfQuadruples = self.quadraplesCounter - self.actualFuncProcessingStartingQuadruple
         self.funcDir[self.actualFuncProcessingName]['quadrupleCounter'] = numberOfQuadruples
+        self.funcDir[self.actualFuncProcessingName]['startingQuadruple'] = self.actualFuncProcessingStartingQuadruple + 1
 
     def processEndOfFunc(self):
         self.actualFuncProcessingName = 'noInitialized'
@@ -2048,6 +2061,409 @@ class NP:
 
 #==============================================================================
 
+    def preProcessFuncReturnExpression(self):
+        print("preProcessing arrayInvocation:")
+        print(" ")
+
+        print("///////////////////////////////////////////////////////")
+        print("/////PRE PRCOESS OF FUNC RETURN EXPRESSION/////////////")
+        print("///////////////////////////////////////////////////////")
+
+        print("Pre: ", self.operandsStack)
+        print("Pre: ", self.typesStack)
+        print("Pre: ", self.operatorsStack)
+        print("Pre: ", self.jumpsStack)
+
+        self.operatorsStack.append('{') 
+        print(" ")
+        print("Processing: {..........................................")
+        print(self.operatorsStack)
+        print(" ")
+
+        print("Post: ", self.operandsStack)
+        print("Post: ", self.typesStack)
+        print("Post: ", self.operatorsStack)
+        print("Post: ", self.jumpsStack)
+        print(" ")
+
+    def processEndOfFuncReturnExpression(self):
+        length = len(self.operatorsStack)
+        index = length - 1
+        indexMinusOne = index - 1
+
+        print("ACTUAL SCOPE:")
+        print(self.actualAritmeticScope)
+        print(" ")
+        print("PROCESSING FUNC RETURN EXPRESSION:")
+        print(self.actualFuncProcessingName)
+        print("PROCESSING FUNC RETURN TYPE:")
+        print(self.actualFuncProcessingType)
+        print(" ")
+
+
+        print("#==============================================================================")
+        print("#==============================================================================")
+        print("#==============================================================================")
+        print("processEndOfExpFuncReturn/////////////////////////////////////////////")
+        print("#==============================================================================")
+        print("#==============================================================================")
+        print("#==============================================================================")
+        print("operatorStack: ", self.operatorsStack)
+        print("Length: ", length)
+
+        if(length > 0):
+            print("=======================================")
+            print("index: ", index)
+            print("Last element: ", self.operatorsStack[index])
+
+            while((len(self.operatorsStack) > 0) and (self.operatorsStack[index] != '{')):
+                if(length > 0):
+                    print("PRE OPERATOR FOUND")
+                    print("=======================================")
+                    print("Pre: ", self.operandsStack)
+                    print("Pre: ", self.typesStack)
+                    print("Pre: ", self.operatorsStack)
+                    print("Found +, -, *, /, <, >, == or !=: ", True)
+                    #self.operatorsStack.pop()
+
+
+
+
+                    #////////////////////////////////////////////////////////////
+                    rightOperand = self.operandsStack.pop()
+                    leftOperand = self.operandsStack.pop()
+                    #////////////////////////////////////////////////////////////
+                    rightAddressOperand = self.addressOperandsStack.pop()
+                    leftAddressOperand = self.addressOperandsStack.pop()
+                    #////////////////////////////////////////////////////////////
+                    rightType = self.typesStack.pop()
+                    leftType = self.typesStack.pop()
+                    operator = self.operatorsStack.pop()
+
+                    print("TYPE MATCHING DATA")
+                    print([operator, leftType, rightType])
+                        
+                    #CHECAR COMPATIBILIDAD DE TIPOS.
+                    resultingType = matchTypes.match((operator, leftType, rightType))
+
+                    self.temporalsCounter = self.temporalsCounter + 1
+                    #////////////////////////////////////////////////////////////
+                    self.quadraplesCounter = self.quadraplesCounter + 1
+                    #////////////////////////////////////////////////////////////
+                    self.addressQuadruplesCounter = self.addressQuadruplesCounter + 1
+                    #////////////////////////////////////////////////////////////
+                    strTemporal = str(self.temporalsCounter)
+                    string = "t" + strTemporal
+
+
+
+
+
+                    #=============================================================================
+                    ##############################################################################
+                    #/////////////////////////////////////////////////////////////////////////////
+                    temporalAddress = virtualMemory.saveAddress('Temporals', resultingType, string)
+                    print("TemporalAddress: ", temporalAddress)
+                    #/////////////////////////////////////////////////////////////////////////////
+                    ##############################################################################
+                    #=============================================================================
+
+
+
+
+
+                    #////////////////////////////////////////////////////////////
+                    quadruple = [operator, leftOperand, rightOperand, string]
+                    #////////////////////////////////////////////////////////////
+                    addrQuadruple = [operator, leftAddressOperand, rightAddressOperand, temporalAddress]
+                    #////////////////////////////////////////////////////////////
+
+
+                    #////////////////////////////////////////////////////////////
+                    self.quadruplesDictionary[self.quadraplesCounter] = quadruple
+                    #////////////////////////////////////////////////////////////
+                    self.addressQuadruplesDictionary[self.addressQuadruplesCounter] = addrQuadruple
+                    #////////////////////////////////////////////////////////////
+
+                    #////////////////////////////////////////////////////////////
+                    self.operandsStack.append(string)
+                    #////////////////////////////////////////////////////////////
+                    self.addressOperandsStack.append(temporalAddress)
+                    #////////////////////////////////////////////////////////////
+                    self.typesStack.append(resultingType)
+
+
+
+
+                    print("Post: ", self.operandsStack)
+                    print("Post: ", self.typesStack)
+                    print("Post: ", self.operatorsStack)
+
+                    length = len(self.operatorsStack)
+                    index = length - 1
+                    print("New index: ", index)
+
+                    if(length > 0):
+                            print("New last element: ", self.operatorsStack[index])
+
+                            if(self.operatorsStack[index] != '{'):
+                                print("{ STILL NOT FOUND: TRUE")
+                            else:
+                                found = False
+                                print("Found +, -, *, /, <, >, == or !=: ", False)
+                    else:
+                        found = False
+                        print("Found +, -, *, /, <, >, == or !=: ", False)
+            
+            print(" ")
+            length = len(self.operatorsStack)
+            index = length - 1
+            indexMinusOne = index - 1
+            print("LENGTH AFTER HAVING RESULT: ", length)
+            print("INDEX AFTER HAVING RESULT: ", index)
+            print("VALUE FOR INDEX: ", self.operatorsStack[index])
+            print("INDEX MINUES ONE AFTER HAVING RESULT: ", indexMinusOne)
+            print("VALUE FOR INDEX MINUES ONE: ", self.operatorsStack[indexMinusOne])
+
+            
+            if((len(self.operatorsStack) > 0) and (self.operatorsStack[index] == '{')):
+                print("{ FOUND, GETTING (POPING) RESULT OF ARRAY INDEX EXP:")
+                print("Pre: ", self.operandsStack)
+                print("Pre: ", self.addressOperandsStack)
+                print("Pre: ", self.typesStack)
+                print("Pre: ", self.operatorsStack)
+                self.operatorsStack.pop()
+
+
+                length = len(self.operatorsStack)
+                index = length - 1
+
+                # resultingOperand = self.operandsStack.pop()
+                # resultinAddressOperand = self.addressOperandsStack.pop()
+                resultingOperand = self.operandsStack[index]
+                resultinAddressOperand = self.addressOperandsStack[index]
+
+  
+                resultingType = self.typesStack.pop()
+
+                if(resultingType == self.actualFuncProcessingType):
+                    print("THE EXPRESSION TYPE AND THE FUNC RETURNING TYPE MATCH")
+                else:
+                    raise TypeError("ERROR: THE EXPRESSION TYPE AND THE FUNC RETURNING TYPE DOESNT MATCH FUNCTION: ", self.actualFuncProcessingName)
+
+
+                #===========================================================
+                ############################################################
+                #////////////////////////////////////////////////////////////
+                print("RESULTING OPERAND (NORMAL):", resultingOperand)
+                print("RESULTING OPERAND (ADDRESS):", resultinAddressOperand)
+
+
+                isString = isinstance(resultingOperand, str)
+                print("Is finalReturningExp a string ? : ", isString)
+
+
+                print(" ")
+                print("Type of finalReturning exp:")
+                print(type(resultingOperand))
+            
+
+                if(isString == False):
+                    result = virtualMemory.checkIfCte(resultingType, resultingOperand) 
+
+                    print("")
+                    virtualMemory.printDictionaries()
+                    print("")
+                    if(result[0] == True):
+                        print("IT WAS A CONSTANT: ")
+                        print(result)
+                        addressParamForQuadruple = result[1]
+                    else:
+                        print("IT WAS NOT A CONSTANT: ")
+                        print(result)
+
+                #////////////////////////////////////////////////////////////
+                ############################################################
+                #===========================================================
+
+
+                quadruple = ['Ret', ' ', ' ', resultingOperand]
+                addressQuadruple = ['Ret', ' ', ' ', resultinAddressOperand]
+
+
+
+                #////////////////////////////////////////////////////////////
+                self.quadraplesCounter = self.quadraplesCounter + 1
+                #////////////////////////////////////////////////////////////
+                self.addressQuadruplesCounter = self.addressQuadruplesCounter + 1
+                #////////////////////////////////////////////////////////////
+
+
+                #////////////////////////////////////////////////////////////
+                self.quadruplesDictionary[self.quadraplesCounter] = quadruple
+                #////////////////////////////////////////////////////////////
+                self.addressQuadruplesDictionary[self.addressQuadruplesCounter] = addressQuadruple
+                #////////////////////////////////////////////////////////////
+
+
+
+
+                print("Post: ", self.operandsStack)
+                print("Post: ", self.addressOperandsStack)
+                print("Post: ", self.typesStack)
+                print("Post: ", self.operatorsStack)
+
+                print("///////////////////////////////////")
+        print(" ")
+
+    def processSaveFuncReturnValue(self):
+        length = len(self.operatorsStack)
+        index = length - 1
+
+
+        print("#==============================================================================")
+        print("#==============================================================================")
+        print("#==============================================================================")
+        print("processSaveFuncReturnValue/////////////////////////////////////////////")
+        print("#==============================================================================")
+        print("#==============================================================================")
+        print("#==============================================================================")
+
+
+        print("ACTUAL SCOPE:")
+        print(self.actualAritmeticScope)
+        print(" ")
+        print("PROCESSING FUNC RETURN EXPRESSION:")
+        print(self.actualFuncProcessingName)
+        print("PROCESSING FUNC RETURN TYPE:")
+        print(self.actualFuncProcessingType)
+        print(" ")
+
+
+        returnValueGlobalVarId = self.actualFuncProcessingName
+        #FALTA DAR DE ALTA
+        address = virtualMemory.saveAddress('Global', self.actualFuncProcessingType, returnValueGlobalVarId)
+
+        resultingOperand = self.operandsStack.pop()
+        resultinAddressOperand = self.addressOperandsStack.pop()
+
+        quadruple = ['=', resultingOperand, ' ', returnValueGlobalVarId]
+        addressQuadruple = ['=', resultinAddressOperand, ' ', address]
+
+
+        print("PRE SAVE FUNC RETURN:", self.quadruplesDictionary)
+        print("PRE SAVE FUNC RETURN:", self.addressQuadruplesDictionary)
+
+        #////////////////////////////////////////////////////////////
+        self.quadraplesCounter = self.quadraplesCounter + 1
+        #////////////////////////////////////////////////////////////
+        self.addressQuadruplesCounter = self.addressQuadruplesCounter + 1
+        #////////////////////////////////////////////////////////////
+
+        #////////////////////////////////////////////////////////////
+        self.quadruplesDictionary[self.quadraplesCounter] = quadruple
+        #////////////////////////////////////////////////////////////
+        self.addressQuadruplesDictionary[self.addressQuadruplesCounter] = addressQuadruple
+        #////////////////////////////////////////////////////////////
+
+        print("")
+        print("POST SAVE FUNC RETURN:", self.quadruplesDictionary)
+        print("POST SAVE FUNC RETURN:", self.addressQuadruplesDictionary)
+
+#==============================================================================
+
+    def processReturnValueOnFuncCall(self, funcId):
+        print("table")
+        print(self.funcDir)
+        funcData = self.funcDir.get(funcId, 'notDeclared')
+
+        print("")
+        print("PROCESSING CALL TO FUNCTION: ", funcId)
+
+        print("result funcData:")
+        print(funcData)
+
+        if(funcData == 'notDeclared'):
+            raise TypeError("ERROR: BAD LOGIC, FUNCTION NOT INITIALIZED.")
+        
+
+        returnType = funcData.get('returnType', 'notInitialized')
+        print("returnType:")
+        print(returnType)
+
+        if(returnType == 'notInitialized'):
+            raise TypeError("ERROR: BAD LOGIC, FUNCTION TYPE NOT INITIALIZED.")
+        
+        print("RETURN VALUE OF TYPE: ", returnType)
+        print("")
+
+        if(returnType == 'void'):
+            print("FUNCTION CALL TO A VOID FUNCTION, NOTHING RETURNED.")
+
+            return [False, 'nothing']
+        else:
+            print("FUNCTION CALL TO A FUNCTION THAT RETURNS A VALUE: ", returnType)
+
+            # self.operandsStack.append(funcId)
+
+            #funcIdAddress = virtualMemory.getVarAddressGlobalOrLocal(returnType, funcId)
+
+            # self.addressOperandsStack.append(funcIdAddress[0])
+            # self.typesStack.append(returnType)
+
+            # print("")
+            # print("NORMAL")
+            # print(self.operandsStack)
+            # print("")
+            # print("ADDRESS")
+            # print(self.addressOperandsStack)
+            # print("")
+
+            return [True, returnType]
+            print("./////////////SI ENTRA DESPUES DE AÑADIR AL STACK ADDRESS OPERANDS./////////////")
+
+    def getFuncAddress(self, varType, id):
+        result = virtualMemory.getVarAddressGlobalOrLocal(varType, id)
+        return result
+
+
+    def processAsignationOnReturnValueOnFuncCall(self):
+        operandValue = self.operandsStack.pop()
+        operandToAsignNewValue = self.operandsStack.pop()
+
+        addressOperandToAsignNewValue = self.addressOperandsStack.pop()
+        addressOperandValue = self.addressOperandsStack.pop()
+
+        operandValueType = self.typesStack.pop()
+        operandToAsignNewValueType = self.typesStack.pop()
+        
+
+        operator = self.operatorsStack.pop()
+
+        resultingType = matchTypes.match((operator, operandValueType, operandToAsignNewValueType))
+
+        quadruple = ['=', operandToAsignNewValue, ' ', operandValue]
+        addressQuadruple = ['=', addressOperandToAsignNewValue, ' ', addressOperandValue]
+
+        self.quadraplesCounter = self.quadraplesCounter + 1
+        self.addressQuadruplesCounter = self.addressQuadruplesCounter + 1
+
+        #////////////////////////////////////////////////////////////
+        self.quadruplesDictionary[self.quadraplesCounter] = quadruple
+        #////////////////////////////////////////////////////////////
+        self.addressQuadruplesDictionary[self.addressQuadruplesCounter] = addressQuadruple
+        #////////////////////////////////////////////////////////////
+        print("operandsStack//// ", self.operandsStack)
+        print("addressOperandsStack//// ", self.addressOperandsStack)
+        print("operatosStack//// ", self.operatorsStack)
+        print("typesStack//// ", self.typesStack)
+    
+
+
+
+
+#==============================================================================
+
     def processStartOfProgram(self):
         #////////////////////////////////////////////////////////////
         self.quadraplesCounter = self.quadraplesCounter + 1
@@ -2169,12 +2585,28 @@ class NP:
 
 
     def processGlobalAndLocalOnAddressOperandStack(self, type, varId):
+        print("")
+        print("ASIGNACION PN1")
+        print("")
+        print(" ASIGNACION PN1Pre: ", self.operandsStack)
+        print(" ASIGNACION PN1Pre: ", self.addressOperandsStack)
+        print(" ASIGNACION PN1Pre: ", self.typesStack)
+        print(" ASIGNACION PN1Pre: ", self.operatorsStack)
+        print(" ASIGNACION PN1Pre: ", self.jumpsStack)
+
         result = virtualMemory.getVarAddressGlobalOrLocal(type, varId)
         self.addressOperandsStack.append(result[0])
         self.momentaniumAddressOperandsStack.append(result[0])
 
         self.momentaniumAddressQuadrupleCounter = self.momentaniumAddressQuadrupleCounter + 1
         self.momentaniumQuadrupleDictionary[self.momentaniumAddressQuadrupleCounter] = result
+
+        print(" ASIGNACION PN1 Post: ", self.operandsStack)
+        print(" ASIGNACION PN1 Post: ", self.addressOperandsStack)
+        print(" ASIGNACION PN1 Post: ", self.typesStack)
+        print("ASIGNACION PN1 Post: ", self.operatorsStack)
+        print("ASIGNACION PN1 Post: ", self.jumpsStack)
+        print(" ")
 
     def processIntCteOnAddressOperandsStack(self, cte):
         address = virtualMemory.saveAddress('Constants', 'int', cte)
@@ -2666,8 +3098,15 @@ class NP:
                 string = '{' + string + '}'
                 temporalAddress = '{' + str(temporalAddress) + '}'
 
+
+                addressAsConstantMemory = virtualMemory.saveAddress('Constants', 'int', arrayIndexData[0])
+
+
+                # quadruple2 = ['+', resultingOperand, arrayIndexData[0], string]
+                # addressQuadruple2 = ['+', resultinAddressOperand, arrayIndexData[0], temporalAddress]
                 quadruple2 = ['+', resultingOperand, arrayIndexData[0], string]
-                addressQuadruple2 = ['+', resultinAddressOperand, arrayIndexData[0], temporalAddress]
+                addressQuadruple2 = ['+', resultinAddressOperand, addressAsConstantMemory, temporalAddress]
+                
 
                 self.quadruplesDictionary[self.quadraplesCounter] = quadruple2
                 self.addressQuadruplesDictionary[self.addressQuadruplesCounter] = addressQuadruple2
@@ -2735,6 +3174,43 @@ class NP:
         print("arraysIndexDataDictionary:")
         print(self.arraysIndexData)
 
+    def printPre(self, fromWhere):
+        fromWhereValue = fromWhere
+
+        print("")
+        print("{}".format(fromWhereValue))
+        print("")
+        print("//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////")
+        print("//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////")
+        print(" {} Pre: ".format(fromWhereValue), self.operandsStack)
+        print(" {} Pre: ".format(fromWhereValue), self.addressOperandsStack)
+        print(" {} Pre: ".format(fromWhereValue), self.typesStack)
+        print(" {} Pre: ".format(fromWhereValue), self.operatorsStack)
+        print(" {} Pre: ".format(fromWhereValue), self.jumpsStack)
+        print("//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////")
+        print("//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////")
+        print("//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////")
+        print("//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////")
+        print("//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////")
+
+    def printPost(self, fromWhere):
+        fromWhereValue = fromWhere
+
+        print("//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////")
+        print("//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////")
+        print("//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////")
+        print("//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////")
+        print("//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////")
+        print("{}".format(fromWhereValue))
+        print("")
+        print(" {} Post: ".format(fromWhereValue), self.operandsStack)
+        print(" {} Post: ".format(fromWhereValue), self.addressOperandsStack)
+        print(" {} Post: ".format(fromWhereValue), self.typesStack)
+        print("{} Post: ".format(fromWhereValue), self.operatorsStack)
+        print("{} Post: ".format(fromWhereValue), self.jumpsStack)
+        print("//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////")
+        print("//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////")
+        print(" ")
 #==============================================================================
 #==============================================================================
 #==============================================================================
@@ -2751,3 +3227,6 @@ class NP:
     
     def getConstantsMemory(self):
         return virtualMemory.getConstantsVirtualMemory()
+    
+    def getFuncsDictionary(self):
+        return self.funcDir
