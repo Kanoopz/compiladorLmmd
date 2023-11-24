@@ -1,14 +1,19 @@
 class VM:
-    def __init__(self, quadruples, constants, totalQuadruples):
+    def __init__(self, quadruples, constants, totalQuadruples, functions):
         self.quadruplesDictionary = quadruples
         #self.constantsDictionary = constants
 
         self.virtualMemoryDictionary = constants
         
+        self.functionsDictionary = functions
+        
         self.functionsJumpStack = []
+        #self.functionYetToJumpStack = []
+        self.functionsParamStack = []
         
         self.actualQuadupleCounter = 1
         self.numberOfGenereatedQuaduples = totalQuadruples
+        
 
     def getAddressType(self, address):
         isString = isinstance(address, str)
@@ -45,7 +50,149 @@ class VM:
             return 'char'
         elif(addressToCheck == 37501 or addressToCheck == 40000 or (addressToCheck > 37501 and addressToCheck < 40000)):
             return 'string'
+
+    def setParamValuesInLocalAddresses(self):
+        ("preInverseParamsStack: ", self.functionsParamStack)
+        self.functionsParamStack.reverse()
+        ("postInverseParamsStack: ", self.functionsParamStack)
+
+        paramCounter = len(self.functionsParamStack)
+        print("quantityOfActualParamsInStack: ", paramCounter)
+
+        intAddressCounter = 10000
+        floatAddressCounter = 13333
+        charAddressCounter = 16666
+
+        while(paramCounter != 0):
+            address = self.functionsParamStack.pop()
+            print("addressOfProcessingParamValue, ", address)
+
+            type = self.getAddressType(address)
+            print("typeOfTheAddress: ", type)
+
+            if(type == 'int'):
+                print("preIntAddress: ", intAddressCounter)
+                intAddressCounter = intAddressCounter + 1
+                print("postIntAddress: ", intAddressCounter)
+
+                memoryToStore = intAddressCounter
+
+                valueToStore = self.virtualMemoryDictionary.get(address)
+
+                self.virtualMemoryDictionary[memoryToStore] = valueToStore
+            elif(type == 'float'):
+                print("preFloatAddress: ", floatAddressCounter)
+                floatAddressCounter = floatAddressCounter + 1
+                print("postFloatAddress: ", floatAddressCounter)
+
+                memoryToStore = floatAddressCounter
+
+                valueToStore = self.virtualMemoryDictionary.get(address)
+
+                self.virtualMemoryDictionary[memoryToStore] = valueToStore
+            elif(type == 'char'):
+                charAddressCounter = charAddressCounter + 1
+                memoryToStore = charAddressCounter
+
+                valueToStore = self.virtualMemoryDictionary.get(address)
+
+                self.virtualMemoryDictionary[memoryToStore] = valueToStore
+
+
+            paramCounter = len(self.functionsParamStack)
+
+
+    def checkIndirectIndex(self, address):
+        print("COMPARING INDIRECT ADDRESS")
+        print("ADDRESS CHECKING: ", address)
+
+        isString = isinstance(address, str)
+        print("isString?: ", isString)
+        #addressToCheck = address
         
+        if(isString == True and address != ' '):
+            #addressToCheck = int(address)
+            charFoundCounter = 0
+            charCheck = ["{", "}"]
+
+            for char in charCheck:
+                if char in address:
+                    charFoundCounter = charFoundCounter + 1
+            
+            if(charFoundCounter == 2):
+                print("INDIRECT ADDRESS FOUND:", address)
+
+                processedAddress = address.replace("{", "").replace("}", "")
+
+                print("ADDRESS AFTER DELETING {:", processedAddress)
+
+                # processedAddress2 = processedAddress.replace("} ", "")
+
+                # print("ADDRESS AFTER DELETING }:", processedAddress2)
+
+                intAddress = int(processedAddress)
+
+                indirectAddress = self.virtualMemoryDictionary.get(intAddress, 'error')
+
+                print("indirectAddress: ", indirectAddress)
+
+                if(indirectAddress == 'error'):
+                    raise TypeError("ERROR: SOMETHING WENT WRONG GETTING THE INDIRECT ADDRESS")
+                else:
+                    return indirectAddress
+            elif(charCheck == 0):
+                return address
+            else:
+                raise TypeError("ERROR: INDIRECT ADDRESS NOT PROCESSED CORRECTLY")
+        elif(isString == False):
+            return address
+        
+    def checkIndirectIndexForMemoryToStore(self, address):
+        print("COMPARING INDIRECT ADDRESS")
+        print("ADDRESS CHECKING: ", address)
+
+        isString = isinstance(address, str)
+        print("isString?: ", isString)
+        #addressToCheck = address
+        
+        if(isString == True and address != ' '):
+            #addressToCheck = int(address)
+            charFoundCounter = 0
+            charCheck = ["{", "}"]
+
+            for char in charCheck:
+                if char in address:
+                    charFoundCounter = charFoundCounter + 1
+            
+            if(charFoundCounter == 2):
+                print("INDIRECT ADDRESS FOUND:", address)
+
+                processedAddress = address.replace("{", "").replace("}", "")
+
+                print("ADDRESS AFTER DELETING {:", processedAddress)
+
+                # processedAddress2 = processedAddress.replace("} ", "")
+
+                # print("ADDRESS AFTER DELETING }:", processedAddress2)
+
+                intAddress = int(processedAddress)
+
+                #indirectAddress = self.virtualMemoryDictionary.get(intAddress, 'error')
+
+                #print("indirectAddress: ", indirectAddress)
+
+                # if(indirectAddress == 'error'):
+                #     raise TypeError("ERROR: SOMETHING WENT WRONG GETTING THE INDIRECT ADDRESS")
+                # else:
+                #     return indirectAddress
+
+                return [True, intAddress]
+            elif(charCheck == 0):
+                return [False, address]
+            else:
+                raise TypeError("ERROR: INDIRECT ADDRESS NOT PROCESSED CORRECTLY")
+        elif(isString == False):
+            return [False, address]
 
     def executeQuaduples(self):
         goToMainQuadruple = self.quadruplesDictionary.get(1)
@@ -57,36 +204,54 @@ class VM:
         while(self.actualQuadupleCounter < self.numberOfGenereatedQuaduples or self.actualQuadupleCounter == self.numberOfGenereatedQuaduples):
             actualQuadruple = self.quadruplesDictionary.get(self.actualQuadupleCounter)
             print(" ")
-            print('actualQuadruple executing:')
-            print(actualQuadruple)
+            print('------------ actualQuadruple executing:')
+            print('------------ ', actualQuadruple)
             print(" ")
 
             if(actualQuadruple[0] == '+'):
-                leftOperand = actualQuadruple[1]
-                rightOperand = actualQuadruple[2]
-                memoryToStore = actualQuadruple[3]
+                leftOperand = self.checkIndirectIndex(actualQuadruple[1])
+                rightOperand = self.checkIndirectIndex(actualQuadruple[2])
+                memoryToStoreData = self.checkIndirectIndexForMemoryToStore(actualQuadruple[3])
+                memoryToStore = memoryToStoreData[1]
 
                 valueType = self.getAddressType(memoryToStore)
+
                 print("")
                 print("Address:")
                 print(memoryToStore)
                 print("Address Type:")
                 print(valueType)
 
-                leftValue = self.virtualMemoryDictionary.get(leftOperand)
-                rightValue = self.virtualMemoryDictionary.get(rightOperand)
+                leftValue = self.virtualMemoryDictionary.get(leftOperand, 'notInDictionary')
+                print("leftValue: ", leftValue)
+                print("type of leftValue: ", type(leftValue))
+
+                rightValue = self.virtualMemoryDictionary.get(rightOperand, 'notInDictionary')
+                print("rightValue: ", rightValue)
+                print("type of rightValue: ", type(rightValue))
+
+                print("")
+                if(memoryToStoreData[0] == True):
+                    print("EL VALOR FUE TRUE")
+                    #rightValue = self.checkIndirectIndex(actualQuadruple[2])
+                    #rightValue = actualQuadruple[2]
+                elif(memoryToStoreData[0] == False):
+                    print("EL VALOR FUE FALSE")
+                    #diunod
+                print("")
 
                 ##########################################################
                 ##########################################################
                 valueToStore = leftValue + rightValue
+                print("RESULTING VALUE: ", valueToStore)
                 ##########################################################
                 ##########################################################
 
                 self.virtualMemoryDictionary[memoryToStore] = valueToStore
             elif(actualQuadruple[0] == '-'):
-                leftOperand = actualQuadruple[1]
-                rightOperand = actualQuadruple[2]
-                memoryToStore = actualQuadruple[3]
+                leftOperand = self.checkIndirectIndex(actualQuadruple[1])
+                rightOperand = self.checkIndirectIndex(actualQuadruple[2])
+                memoryToStore = self.checkIndirectIndex(actualQuadruple[3])
 
 
                 
@@ -110,9 +275,9 @@ class VM:
 
                 self.virtualMemoryDictionary[memoryToStore] = valueToStore
             elif(actualQuadruple[0] == '*'):
-                leftOperand = actualQuadruple[1]
-                rightOperand = actualQuadruple[2]
-                memoryToStore = actualQuadruple[3]
+                leftOperand = self.checkIndirectIndex(actualQuadruple[1])
+                rightOperand = self.checkIndirectIndex(actualQuadruple[2])
+                memoryToStore = self.checkIndirectIndex(actualQuadruple[3])
 
 
 
@@ -136,9 +301,9 @@ class VM:
 
                 self.virtualMemoryDictionary[memoryToStore] = valueToStore
             elif(actualQuadruple[0] == '/'):
-                leftOperand = actualQuadruple[1]
-                rightOperand = actualQuadruple[2]
-                memoryToStore = actualQuadruple[3]
+                leftOperand = self.checkIndirectIndex(actualQuadruple[1])
+                rightOperand = self.checkIndirectIndex(actualQuadruple[2])
+                memoryToStore = self.checkIndirectIndex(actualQuadruple[3])
 
 
 
@@ -157,13 +322,17 @@ class VM:
                 ##########################################################
                 ##########################################################
                 valueToStore = leftValue / rightValue
+
+                if(valueType == 'int'):
+                    valueToStoreInt = int(valueToStore)
+                    valueToStore = valueToStoreInt
                 ##########################################################
                 ##########################################################
 
                 self.virtualMemoryDictionary[memoryToStore] = valueToStore
             elif(actualQuadruple[0] == '='):
-                leftOperand = actualQuadruple[3]
-                rightOperand = actualQuadruple[1]
+                leftOperand = self.checkIndirectIndex(actualQuadruple[3])
+                rightOperand = self.checkIndirectIndex(actualQuadruple[1])
 
 
 
@@ -208,15 +377,15 @@ class VM:
 
                 self.virtualMemoryDictionary[memoryToStore] = inputRead
             elif(actualQuadruple[0] == 'Write'):
-                memoryValue = actualQuadruple[3]
+                memoryValue = self.checkIndirectIndex(actualQuadruple[3])
                 storedValue = self.virtualMemoryDictionary.get(memoryValue)
 
                 print("PRINTING....")
                 print(storedValue)
             elif(actualQuadruple[0] == '>'):
-                leftOperand = actualQuadruple[1]
-                rightOperand = actualQuadruple[2]
-                memoryToStore = actualQuadruple[3]
+                leftOperand = self.checkIndirectIndex(actualQuadruple[1])
+                rightOperand = self.checkIndirectIndex(actualQuadruple[2])
+                memoryToStore = self.checkIndirectIndex(actualQuadruple[3])
 
 
                 leftValue = self.virtualMemoryDictionary.get(leftOperand)
@@ -230,9 +399,9 @@ class VM:
 
                 self.virtualMemoryDictionary[memoryToStore] = valueToStore
             elif(actualQuadruple[0] == '<'):
-                leftOperand = actualQuadruple[1]
-                rightOperand = actualQuadruple[2]
-                memoryToStore = actualQuadruple[3]
+                leftOperand = self.checkIndirectIndex(actualQuadruple[1])
+                rightOperand = self.checkIndirectIndex(actualQuadruple[2])
+                memoryToStore = self.checkIndirectIndex(actualQuadruple[3])
 
 
                 leftValue = self.virtualMemoryDictionary.get(leftOperand)
@@ -246,9 +415,9 @@ class VM:
 
                 self.virtualMemoryDictionary[memoryToStore] = valueToStore
             elif(actualQuadruple[0] == '=='):
-                leftOperand = actualQuadruple[1]
-                rightOperand = actualQuadruple[2]
-                memoryToStore = actualQuadruple[3]
+                leftOperand = self.checkIndirectIndex(actualQuadruple[1])
+                rightOperand = self.checkIndirectIndex(actualQuadruple[2])
+                memoryToStore = self.checkIndirectIndex(actualQuadruple[3])
 
 
                 leftValue = self.virtualMemoryDictionary.get(leftOperand)
@@ -262,9 +431,9 @@ class VM:
 
                 self.virtualMemoryDictionary[memoryToStore] = valueToStore
             elif(actualQuadruple[0] == '!='):
-                leftOperand = actualQuadruple[1]
-                rightOperand = actualQuadruple[2]
-                memoryToStore = actualQuadruple[3]
+                leftOperand = self.checkIndirectIndex(actualQuadruple[1])
+                rightOperand = self.checkIndirectIndex(actualQuadruple[2])
+                memoryToStore = self.checkIndirectIndex(actualQuadruple[3])
 
 
                 leftValue = self.virtualMemoryDictionary.get(leftOperand)
@@ -292,6 +461,56 @@ class VM:
                 jump = actualQuadruple[3]
                 
                 self.actualQuadupleCounter = jump - 1
+            elif(actualQuadruple[0] == 'Era'):
+                print("ERA: virtual memory for function calculated.")
+            elif(actualQuadruple[0] == 'Param'):
+                print("preParamStack:", self.functionsParamStack)
+
+                print("address sending as param: ", actualQuadruple[1])
+                print("value of the address: ", self.virtualMemoryDictionary.get(actualQuadruple[1]))
+
+                self.functionsParamStack.append(actualQuadruple[1])
+
+                print("postParamStack:", self.functionsParamStack)
+
+
+
+
+            elif(actualQuadruple[0] == 'goSub'):
+                startingQuadruple = self.functionsDictionary[actualQuadruple[1]].get('startingQuadruple')
+
+                print("Starting quadruple of: ", actualQuadruple[1])
+                print("is; ", startingQuadruple)
+
+                self.functionsJumpStack.append(self.actualQuadupleCounter)
+
+                if(len(self.functionsParamStack) != 0):
+                    self.setParamValuesInLocalAddresses()
+
+
+                self.actualQuadupleCounter = startingQuadruple - 1
+            elif(actualQuadruple[0] == 'endFunc'):
+                self.actualQuadupleCounter = self.functionsJumpStack.pop()
+            elif(actualQuadruple[0] == 'Ret'):
+                print("Returning funcValue.....")
+            elif(actualQuadruple[0] == 'Ver'):
+                addressToCompare = self.checkIndirectIndex(actualQuadruple[1])
+                addressLowerLimit = actualQuadruple[2]
+                addressUpperLimit = actualQuadruple[3]
+
+                valueToCompare = self.virtualMemoryDictionary.get(addressToCompare)
+                lowerLimitValue = self.virtualMemoryDictionary.get(addressLowerLimit)
+                upperLimitValue = self.virtualMemoryDictionary.get(addressUpperLimit)
+
+                if(valueToCompare == lowerLimitValue or valueToCompare == upperLimitValue or (valueToCompare > lowerLimitValue and valueToCompare < upperLimitValue)):
+                    print("ARRAY INDEX IN THE ACCEPTED LIMITS")
+                elif(valueToCompare < lowerLimitValue or valueToCompare > upperLimitValue):
+                    raise TypeError("ERROR: ARRAY INDEX OFF LIMITS")
+
+
+            #MANDAR COMO PARAM UN ARREGLO: self.checkIndirectIndex(
+                
+            
 
 
 
