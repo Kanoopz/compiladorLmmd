@@ -6,6 +6,7 @@ tokens = [
     'CTE_FLOAT',
     'CTE_CHAR',
     'CTE_LETRERO',
+    'CTE_BOOL',
     'IGUAL_QUE',
     'DIFERENTE_QUE',
     'MAYOR_QUE',
@@ -29,11 +30,13 @@ reserved = {
     'while' : 'WHILE',
     'do' : 'DO',
     'to' : 'TO',
-    'for' : 'FOR'
+    'for' : 'FOR',
+    'media' : 'MEDIA',
+    'moda' : 'MODA',
+    'varianza' : 'VARIANZA'
 }
 
-#literals = ',;][}{)(=+-*/><=&|'
-literals = ['(', ')', '[', ']', '{', '}', '+', '-', '*', '/', '|', '&', '>', '<', '=', ',', ':', ';']
+literals = ['(', ')', '[', ']', '{', '}', '+', '-', '*', '/', '|', '&', '>', '<', '=', ',', ':', ';', '.']
 
 
 
@@ -41,9 +44,9 @@ tokens = tokens + list(reserved.values())
 
 
 
-def t_ID(t):
-    r'[a-zA-Z][a-zA-Z_0-9<>\-\?]*'
-    t.type = reserved.get(t.value, 'ID')
+def t_CTE_FLOAT(t):
+    r'-?\d+\.\d+'
+    t.value = float(t.value)
     return t
 
 def t_CTE_INT(t):
@@ -51,22 +54,25 @@ def t_CTE_INT(t):
     t.value = int(t.value)
     return t
 
-def t_CTE_FLOAT(t):
-    r'-?\d+\.\d+'
-    t.value = float(t.value)
-    return t
-
 def t_CTE_CHAR(t):
     r'\'[0-9A-Za-z_ ]{1}\''
     t.value = list(t.value)[1]
+    return t
+
+def t_CTE_BOOL(t):
+    r'\'[0-9A-Za-z_ ]{1}\''
+    t.value = bool(t.value)[1]
     return t
 
 t_CTE_LETRERO = r'\"([^\\]|(\\.))*?\"'
 
 t_IGUAL_QUE = r'\=\='
 t_DIFERENTE_QUE = r'\!\='
-t_MAYOR_QUE = r'\>\='
-t_MENOR_QUE = r'\<\='
+
+def t_ID(t):
+    r'[a-zA-Z][a-zA-Z_0-9<>\-\?]*'
+    t.type = reserved.get(t.value, 'ID')
+    return t
 
 
 t_ignore = ' \t'
@@ -97,7 +103,7 @@ def test():
     while True:
         tok = lexer.token()
         if not tok:
-            break      # No more input
+            break     
         print(tok)
 
 test()
