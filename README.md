@@ -1,9 +1,9 @@
 # compiladorLmmd
 Compilador de "laMateriaMasDificil": diseñoDeCompiladores.
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////
 DOCUMENTACION DE USUARIO
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////
 
 Este es un lenguaje estadistico escrito en Python usando PLY. El lenguaje implementa todos los componentes tradicionales de un lenguaje tipico; variables, operaciones aritmeticas, ciclos, condicionales de flujo, arreglos y funciones estadisticas como la media, moda y varianza.
 
@@ -20,38 +20,63 @@ Tipos soportados para el uso del usuario:
 int, float y char.
 LMMD también soporta elementos no atomicos hoogeneos de una dimensión; arrays, del mismo tipo que los soportados para el usuario de los atomicos.
 
+=====================================
 Asignacion
 x = 5 ;
-y[1] = 7 ´4;
+y[1] = 7 * 4;
+=====================================
 
+
+=====================================
 Condiciones
 if ( x < 3 ) 
 { y = y + 1; }
+=====================================
 
+
+=====================================
 if ( y < 3 )
 { x = x + 2; } 
 else 
 { x = x - 3; }
+=====================================
 
+
+=====================================
 Ciclos
 while ( x > 3 ) do { y = x - 1 } ;
+=====================================
 
+
+=====================================
 Lectura
 read(a);
+=====================================
 
+
+=====================================
 Escritura
 write(b);
+=====================================
 
+
+=====================================
 Modulos / Funciones
 function void miFunc()
 {}
+=====================================
 
+
+=====================================
 Invocacion modulos / funcs
 function float calculateFloatValue()
 {}
 
 miVarFloat = calculateFloatValue();
+=====================================
 
+
+=====================================
 Estadistica
 
 int: miArreglo[10];
@@ -60,3 +85,5 @@ float: media, moda, varianza;
 media = media(miArreglo);
 moda = moda(miArreglo);
 varianza = varianza(miArreglo);
+=====================================
+=====================================
