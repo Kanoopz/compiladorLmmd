@@ -345,18 +345,6 @@ class useOfMemory:
 
 
     def getVarAddressGlobalOrLocal(self, type, varId):
-        # varInDictionary = self.vars_memoryAddresses_Dictionary['Global'][type].get(varId, 'notDeclared')
-
-        # if(varInDictionary == 'notDeclared'):
-        #     varInDictionary2 = self.vars_memoryAddresses_Dictionary['Locals'][type].get(varId, 'notDeclared')
-
-        #     if(varInDictionary2 == 'notDeclared'):
-        #         raise TypeError("Var not saved in address global nor local.")
-        #     else:
-        #         return [varInDictionary2, varId]
-        # else:
-        #     return [varInDictionary, varId]
-
         varInDictionary = self.vars_memoryAddresses_Dictionary['Locals'][type].get(varId, 'notDeclared')
 
         if(varInDictionary == 'notDeclared'):
