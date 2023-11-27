@@ -1,0 +1,75 @@
+program MyRlike;
+
+vars 
+int: arrayOfReceivedNumbers[5], loopCounter, numberReceived;
+int: isOrdered, arrayHelperOne, arrayHelperTwo, changedNumbersCounter;
+
+main()
+{    
+    loopCounter = 0;
+
+    while(loopCounter != 5) do
+    {
+        write("Digita un numero: ");
+        read(numberReceived);
+
+        arrayOfReceivedNumbers[loopCounter] = numberReceived;
+
+        loopCounter = loopCounter + 1;
+    }
+
+    write("//////////////////////////////////////////////////////////////");
+
+
+    write("Ordenando el arreglo:");
+
+    isOrdered = 0;
+    loopCounter = 0;
+    changedNumbersCounter = 0;
+
+
+
+    while(isOrdered == 0) do
+    {
+        loopCounter = 0;
+
+        changedNumbersCounter = 0;
+
+        while(loopCounter != 4) do
+        {
+            if(arrayOfReceivedNumbers[loopCounter] > arrayOfReceivedNumbers[loopCounter + 1])
+            {
+                arrayHelperOne = arrayOfReceivedNumbers[loopCounter];
+                arrayHelperTwo = arrayOfReceivedNumbers[loopCounter + 1];
+
+                arrayOfReceivedNumbers[loopCounter] = arrayHelperTwo;
+                arrayOfReceivedNumbers[loopCounter + 1] = arrayHelperOne;
+
+                changedNumbersCounter = changedNumbersCounter + 1;
+            }
+
+            loopCounter = loopCounter + 1;
+        }
+
+        if(changedNumbersCounter == 0)
+        {
+            isOrdered = 1;
+        }
+    }
+
+
+
+
+    write("//////////////////////////////////////////////////////////////");
+    
+    write("Array ordenado:");
+
+    loopCounter = 0;
+
+    while(loopCounter != 5) do
+    {
+        write(arrayOfReceivedNumbers[loopCounter]);
+        loopCounter = loopCounter + 1;
+    }
+}
+

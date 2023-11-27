@@ -1,0 +1,54 @@
+program MyRlike;
+
+vars 
+int: userFibbonacciNumber, result;
+
+
+function int fibbonaci(int positionToCalculate)
+vars
+int: helper, helperOne, helperTwo, counter, resultToReturn;
+{
+    counter = 1;
+    limit = positionToCalculate + 1;
+
+    if(positionToCalculate == 1)
+    {
+        resultToReturn = 0;
+    }
+
+    if(positionToCalculate == 2)
+    {
+        resultToReturn = 1;
+    }
+
+    if(positionToCalculate > 2)
+    {
+        counter = 2;
+
+        helperOne = 0;
+        helperTwo = 1;
+
+        while(factorialToDo != counter) do
+        {
+            helper = helperOne + helperTwo;
+            helperOne = helperTwo;
+            helperTwo = helper;
+
+            counter = counter + 1;
+        }
+
+        resultToReturn = helper;
+    }
+
+
+    return(resultToReturn);
+}
+
+main()
+{    
+    write("¿Hasta que posicion en la serie de fibonacci quieres calcualr (tomando en cuenta el 0 y 1 como posicion 1 y dos)?");
+    read(userFibbonacciNumber);
+    result = fibbonaci(userFibbonacciNumber);
+    write("El factorial es: ", result);
+}
+

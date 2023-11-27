@@ -1,0 +1,30 @@
+program MyRlike;
+
+vars 
+int: userFactorial, result;
+
+
+function int factorialFunc(int factorialToDo)
+vars
+int: resultFactorial;
+{
+    read(factorialToDo);
+    resultFactorial = 1;
+
+    while(factorialToDo != 0) do
+    {
+        resultFactorial = resultFactorial * factorialToDo;
+
+        factorialToDo = factorialToDo - 1;
+    }
+
+    return(resultFactorial);
+}
+
+main()
+{    
+    write("Escribe el numero del factorial que deseeas");
+    result = factorialFunc(userFactorial);
+    write("El factorial es: ", result);
+}
+

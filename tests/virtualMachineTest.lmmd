@@ -1,0 +1,61 @@
+program MyRlike;
+
+vars 
+int: a, b, c, d;
+
+main()
+{    
+    a = 35;
+    b = 17;
+    c = 48;
+    d = 2;
+
+    c = c + b + a;
+    b = c / 2;
+    a = b + 1;
+
+    read(a);
+    read(b);
+    read(c);
+    read(d);
+
+    write(a, b, c + d);
+    write(a + b + c + d - 99);
+
+    if(a < b)
+    {
+        c = d;
+    }
+
+    d = a - 1;
+
+    if(c < d)
+    {
+        a = a - b;
+    }
+    else
+    {
+        write(d);
+    }
+
+    d = 0;
+
+    if(d == 0)
+    {
+        d = 1;
+    }
+
+    if(d != 1)
+    {
+        d = 5;
+    }
+
+    while(d != 5) do
+    {
+        write(d);
+        d = d + 1;
+    }
+
+    write(a);
+}
+

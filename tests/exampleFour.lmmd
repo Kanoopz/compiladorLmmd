@@ -1,0 +1,35 @@
+program MyRlike;
+
+vars 
+int: i, j, p, arreglo[10];
+float: valor;
+char: cJuan, cHola, cSample;
+
+int: A, B, C, D, E, F, G, H, I, J, K;
+
+main()
+{    
+    A = B + C * (D - E / F) * H;
+    B = E - F;
+
+    read(F, B);
+
+    write(A + B, C, D / E);
+
+    while(A * B - C > D * E / G + H) do
+    {
+        H = J * K + B;
+
+        if(B < H)
+        {
+            B = H + J;
+
+            while(B > A + C) do
+            {
+                B = B - J;
+            }
+        }
+    }
+
+    F = A + B;
+}

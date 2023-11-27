@@ -1,22 +1,33 @@
 program MyRlike;
 
 vars 
-int: i, j, p, arreglo[10];
-float: valor;
-
-function int fact (int j)
-vars 
-int: i; 
-{ 
-    i = j + p; 
-}
-
+int: arrayOfReceivedNumbers[10], loopCounter, numberReceived;
+float: mediaResult, modaResult, varianzaResult;
 main()
-{
-    read(p);
-    
-    for i = 1 to 10 do
+{    
+    loopCounter = 0;
+
+    while(loopCounter != 10) do
     {
-        arreglo = p + i;
+        write("Digita un numero: ");
+        read(numberReceived);
+
+        arrayOfReceivedNumbers[loopCounter] = numberReceived;
+
+        loopCounter = loopCounter + 1;
     }
+
+
+    write("Media de los datos:");
+    mediaResult = media(arrayOfReceivedNumbers);
+    write(mediaResult);
+
+    write("Moda de los datos:");
+    modaResult = moda(arrayOfReceivedNumbers);
+    write(modaResult);
+
+    write("Varianza de los datos:");
+    varianzaResult = varianza(arrayOfReceivedNumbers);
+    write(varianzaResult);
 }
+

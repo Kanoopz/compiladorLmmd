@@ -1,0 +1,32 @@
+program MyRlike;
+
+vars 
+int: a, b, c, arreglo[10], d;
+float: fUno;
+float:fDos, arregloFloat[5], g;
+char: arregloChar[3], h;
+
+function void uno(int a)
+vars
+int: b, arregloFunc[6];
+int: arregloFuncDos[3];
+{
+    arregloFunc[arreglo[a + b + c]] = c;
+    arregloFloat[c] = arregloFunc[0];
+}
+
+main()
+{    
+    a = 2;
+    b = 6;
+    c = 0;
+
+    arreglo[c] = a;
+    arreglo[a + b] = 100;
+    arreglo[b - a / 2] = c; 
+    arreglo[a + 1] = arreglo[5];
+    arreglo[0] = arreglo[1] + 1;
+
+    write(arreglo[a / (d + 15)], arreglo[0], b, 7.15);
+}
+

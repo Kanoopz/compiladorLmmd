@@ -1,0 +1,57 @@
+program MyRlike;
+
+vars 
+int: a, c;
+float: b;
+
+function void uno(int a)
+{
+    write(a);
+}
+
+function float dos(int a, int b, float c)
+vars
+float: number;
+{
+    while (a != b) do
+    {
+        number = a * c;
+        a = a + 1;
+    }
+
+    return(number);
+}
+
+function int potencia(int numero, int potencia)
+vars
+int: contador, resultado;
+{
+    contador = 0;
+    resultado = 1;
+
+    while(contador != potencia) do
+    {
+        resultado = resultado * numero;
+        contador = contador + 1;
+    }
+
+    return(resultado);
+}
+
+main()
+{    
+    a = 0;
+    b = 0;
+    c = 9;
+
+    uno(c);
+    uno(1);
+
+    b = dos(0, 4, 2.5);
+
+    a = potencia(3, 3);
+
+    write(a);
+    write(b);
+    write(c);
+}

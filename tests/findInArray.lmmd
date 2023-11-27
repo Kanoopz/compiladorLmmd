@@ -1,0 +1,53 @@
+program MyRlike;
+
+vars 
+int: foundIndex, loopCounter, numberReceived, arrayOfReceivedNumbers[10], numberToSearch, wasFound;
+
+main()
+{    
+    loopCounter = 0;
+
+    while(loopCounter != 10) do
+    {
+        write("Digita un numero: ");
+        read(numberReceived);
+
+        arrayOfReceivedNumbers[loopCounter] = numberReceived;
+
+        loopCounter = loopCounter + 1;
+    }
+
+    loopCounter = 0;
+
+
+
+
+    write("Escribe el numero que quieres buscar dentro del arreglo:");
+    read(numberToSearch);
+
+    wasFound = 0;
+    loopCounter = 0;
+
+    while(loopCounter != 10) do
+    {
+        if(arrayOfReceivedNumbers[loopCounter] == numberToSearch)
+        {
+            wasFound = 1;
+            foundIndex = loopCounter;
+        }
+
+        loopCounter = loopCounter + 1;
+    }
+
+
+    if(wasFound == 0)
+    {
+        write("No se encontró el número que ingresaste.");
+    }
+
+    if(wasFound == 1)
+    {
+        write("Se encontró el número que ingresaste en el indice: ", foundIndex);
+    }
+}
+
