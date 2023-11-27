@@ -1,18 +1,22 @@
+import statistics
+from numpy import var
+import pprint
+
 class VM:
-    def __init__(self, quadruples, constants, totalQuadruples, functions):
+    def __init__(self, quadruples, constants, totalQuadruples, functions, vars):
         self.quadruplesDictionary = quadruples
-        #self.constantsDictionary = constants
 
         self.virtualMemoryDictionary = constants
         
         self.functionsDictionary = functions
         
         self.functionsJumpStack = []
-        #self.functionYetToJumpStack = []
         self.functionsParamStack = []
         
         self.actualQuadupleCounter = 1
         self.numberOfGenereatedQuaduples = totalQuadruples
+
+        self.varsData = vars
         
 
     def getAddressType(self, address):
@@ -57,7 +61,7 @@ class VM:
         ("postInverseParamsStack: ", self.functionsParamStack)
 
         paramCounter = len(self.functionsParamStack)
-        print("quantityOfActualParamsInStack: ", paramCounter)
+        #print("quantityOfActualParamsInStack: ", paramCounter)
 
         intAddressCounter = 10000
         floatAddressCounter = 13333
@@ -65,15 +69,15 @@ class VM:
 
         while(paramCounter != 0):
             address = self.functionsParamStack.pop()
-            print("addressOfProcessingParamValue, ", address)
+            #print("addressOfProcessingParamValue, ", address)
 
             type = self.getAddressType(address)
-            print("typeOfTheAddress: ", type)
+            #print("typeOfTheAddress: ", type)
 
             if(type == 'int'):
-                print("preIntAddress: ", intAddressCounter)
+                #print("preIntAddress: ", intAddressCounter)
                 intAddressCounter = intAddressCounter + 1
-                print("postIntAddress: ", intAddressCounter)
+                #print("postIntAddress: ", intAddressCounter)
 
                 memoryToStore = intAddressCounter
 
@@ -103,11 +107,11 @@ class VM:
 
 
     def checkIndirectIndex(self, address):
-        print("COMPARING INDIRECT ADDRESS")
-        print("ADDRESS CHECKING: ", address)
+        # print("COMPARING INDIRECT ADDRESS")
+        # print("ADDRESS CHECKING: ", address)
 
         isString = isinstance(address, str)
-        print("isString?: ", isString)
+        # print("isString?: ", isString)
         #addressToCheck = address
         
         if(isString == True and address != ' '):
@@ -120,11 +124,11 @@ class VM:
                     charFoundCounter = charFoundCounter + 1
             
             if(charFoundCounter == 2):
-                print("INDIRECT ADDRESS FOUND:", address)
+                # print("INDIRECT ADDRESS FOUND:", address)
 
                 processedAddress = address.replace("{", "").replace("}", "")
 
-                print("ADDRESS AFTER DELETING {:", processedAddress)
+                # print("ADDRESS AFTER DELETING {:", processedAddress)
 
                 # processedAddress2 = processedAddress.replace("} ", "")
 
@@ -134,7 +138,7 @@ class VM:
 
                 indirectAddress = self.virtualMemoryDictionary.get(intAddress, 'error')
 
-                print("indirectAddress: ", indirectAddress)
+                # print("indirectAddress: ", indirectAddress)
 
                 if(indirectAddress == 'error'):
                     raise TypeError("ERROR: SOMETHING WENT WRONG GETTING THE INDIRECT ADDRESS")
@@ -148,11 +152,11 @@ class VM:
             return address
         
     def checkIndirectIndexForMemoryToStore(self, address):
-        print("COMPARING INDIRECT ADDRESS")
-        print("ADDRESS CHECKING: ", address)
+        # print("COMPARING INDIRECT ADDRESS")
+        # print("ADDRESS CHECKING: ", address)
 
         isString = isinstance(address, str)
-        print("isString?: ", isString)
+        # print("isString?: ", isString)
         #addressToCheck = address
         
         if(isString == True and address != ' '):
@@ -165,11 +169,11 @@ class VM:
                     charFoundCounter = charFoundCounter + 1
             
             if(charFoundCounter == 2):
-                print("INDIRECT ADDRESS FOUND:", address)
+                # print("INDIRECT ADDRESS FOUND:", address)
 
                 processedAddress = address.replace("{", "").replace("}", "")
 
-                print("ADDRESS AFTER DELETING {:", processedAddress)
+                # print("ADDRESS AFTER DELETING {:", processedAddress)
 
                 # processedAddress2 = processedAddress.replace("} ", "")
 
@@ -195,18 +199,23 @@ class VM:
             return [False, address]
 
     def executeQuaduples(self):
+
+        print("PROGRAM EXECUTION:")
+        print("/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////")
+        print("/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////")
+        print("/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////")
+
         goToMainQuadruple = self.quadruplesDictionary.get(1)
         mainQuadruple = goToMainQuadruple[3]
         
         self.actualQuadupleCounter = mainQuadruple
 
-        #while(self.quadruplesDictionary[self.actualQuadupleCounter][0] != 'End'):
         while(self.actualQuadupleCounter < self.numberOfGenereatedQuaduples or self.actualQuadupleCounter == self.numberOfGenereatedQuaduples):
             actualQuadruple = self.quadruplesDictionary.get(self.actualQuadupleCounter)
-            print(" ")
-            print('------------ actualQuadruple executing:')
-            print('------------ ', actualQuadruple)
-            print(" ")
+            # print(" ")
+            # print('------------ actualQuadruple executing:')
+            # print('------------ ', actualQuadruple)
+            # print(" ")
 
             if(actualQuadruple[0] == '+'):
                 leftOperand = self.checkIndirectIndex(actualQuadruple[1])
@@ -216,34 +225,34 @@ class VM:
 
                 valueType = self.getAddressType(memoryToStore)
 
-                print("")
-                print("Address:")
-                print(memoryToStore)
-                print("Address Type:")
-                print(valueType)
+                # print("")
+                # print("Address:")
+                # print(memoryToStore)
+                # print("Address Type:")
+                # print(valueType)
 
                 leftValue = self.virtualMemoryDictionary.get(leftOperand, 'notInDictionary')
-                print("leftValue: ", leftValue)
-                print("type of leftValue: ", type(leftValue))
+                # print("leftValue: ", leftValue)
+                # print("type of leftValue: ", type(leftValue))
 
                 rightValue = self.virtualMemoryDictionary.get(rightOperand, 'notInDictionary')
-                print("rightValue: ", rightValue)
-                print("type of rightValue: ", type(rightValue))
+                # print("rightValue: ", rightValue)
+                # print("type of rightValue: ", type(rightValue))
 
-                print("")
-                if(memoryToStoreData[0] == True):
-                    print("EL VALOR FUE TRUE")
-                    #rightValue = self.checkIndirectIndex(actualQuadruple[2])
-                    #rightValue = actualQuadruple[2]
-                elif(memoryToStoreData[0] == False):
-                    print("EL VALOR FUE FALSE")
-                    #diunod
-                print("")
+                # print("")
+                # if(memoryToStoreData[0] == True):
+                #     # print("EL VALOR FUE TRUE")
+                #     #rightValue = self.checkIndirectIndex(actualQuadruple[2])
+                #     #rightValue = actualQuadruple[2]
+                # elif(memoryToStoreData[0] == False):
+                #     # print("EL VALOR FUE FALSE")
+                #     #diunod
+                # print("")
 
                 ##########################################################
                 ##########################################################
                 valueToStore = leftValue + rightValue
-                print("RESULTING VALUE: ", valueToStore)
+                # print("RESULTING VALUE: ", valueToStore)
                 ##########################################################
                 ##########################################################
 
@@ -256,11 +265,11 @@ class VM:
 
                 
                 valueType = self.getAddressType(memoryToStore)
-                print("")
-                print("Address:")
-                print(memoryToStore)
-                print("Address Type:")
-                print(valueType)
+                # print("")
+                # print("Address:")
+                # print(memoryToStore)
+                # print("Address Type:")
+                # print(valueType)
 
 
 
@@ -282,11 +291,11 @@ class VM:
 
 
                 valueType = self.getAddressType(memoryToStore)
-                print("")
-                print("Address:")
-                print(memoryToStore)
-                print("Address Type:")
-                print(valueType)
+                # print("")
+                # print("Address:")
+                # print(memoryToStore)
+                # print("Address Type:")
+                # print(valueType)
 
 
 
@@ -308,11 +317,11 @@ class VM:
 
 
                 valueType = self.getAddressType(memoryToStore)
-                print("")
-                print("Address:")
-                print(memoryToStore)
-                print("Address Type:")
-                print(valueType)
+                # print("")
+                # print("Address:")
+                # print(memoryToStore)
+                # print("Address Type:")
+                # print(valueType)
 
 
 
@@ -337,11 +346,11 @@ class VM:
 
 
                 valueType = self.getAddressType(leftOperand)
-                print("")
-                print("Address:")
-                print(leftOperand)
-                print("Address Type:")
-                print(valueType)
+                # print("")
+                # print("Address:")
+                # print(leftOperand)
+                # print("Address Type:")
+                # print(valueType)
 
 
 
@@ -351,27 +360,27 @@ class VM:
                 memoryToStore = actualQuadruple[3]
 
                 valueType = self.getAddressType(memoryToStore)
-                print("")
-                print("Address:")
-                print(memoryToStore)
-                print("Address Type:")
-                print(valueType)
+                # print("")
+                # print("Address:")
+                # print(memoryToStore)
+                # print("Address Type:")
+                # print(valueType)
 
                 inputToRead = input()
 
-                print("")
-                print("Value read type:")
-                print(type(inputToRead))
-                print("")
+                # print("")
+                # print("Value read type:")
+                # print(type(inputToRead))
+                # print("")
 
                 inputRead = inputToRead
 
                 if(valueType == 'int'):
                     inputRead = int(inputToRead)
-                    print("SHOULD BE TYPE INT")
+                    # print("SHOULD BE TYPE INT")
                 elif(valueType == 'float'):
                     inputRead = float(inputToRead)
-                    print("SHOULD BE TYPE FLOAT")
+                    # print("SHOULD BE TYPE FLOAT")
 
                 
 
@@ -451,9 +460,9 @@ class VM:
                 conditionValue = self.virtualMemoryDictionary.get(condition)
 
                 if(conditionValue == True):
-                    print("CONDITION TRUE.")
+                    print(" ")
                 elif(conditionValue == False):
-                    print("CONDITION FALSE.")
+                    #print("CONDITION FALSE.")
                     jump = actualQuadruple[3]
                     
                     self.actualQuadupleCounter = jump - 1
@@ -462,25 +471,21 @@ class VM:
                 
                 self.actualQuadupleCounter = jump - 1
             elif(actualQuadruple[0] == 'Era'):
-                print("ERA: virtual memory for function calculated.")
+                print(" ")
             elif(actualQuadruple[0] == 'Param'):
-                print("preParamStack:", self.functionsParamStack)
+                # print("preParamStack:", self.functionsParamStack)
 
-                print("address sending as param: ", actualQuadruple[1])
-                print("value of the address: ", self.virtualMemoryDictionary.get(actualQuadruple[1]))
+                # print("address sending as param: ", actualQuadruple[1])
+                # print("value of the address: ", self.virtualMemoryDictionary.get(actualQuadruple[1]))
 
                 self.functionsParamStack.append(actualQuadruple[1])
 
-                print("postParamStack:", self.functionsParamStack)
-
-
-
-
+                # print("postParamStack:", self.functionsParamStack)
             elif(actualQuadruple[0] == 'goSub'):
                 startingQuadruple = self.functionsDictionary[actualQuadruple[1]].get('startingQuadruple')
 
-                print("Starting quadruple of: ", actualQuadruple[1])
-                print("is; ", startingQuadruple)
+                # print("Starting quadruple of: ", actualQuadruple[1])
+                # print("is; ", startingQuadruple)
 
                 self.functionsJumpStack.append(self.actualQuadupleCounter)
 
@@ -492,7 +497,7 @@ class VM:
             elif(actualQuadruple[0] == 'endFunc'):
                 self.actualQuadupleCounter = self.functionsJumpStack.pop()
             elif(actualQuadruple[0] == 'Ret'):
-                print("Returning funcValue.....")
+                print(" ")
             elif(actualQuadruple[0] == 'Ver'):
                 addressToCompare = self.checkIndirectIndex(actualQuadruple[1])
                 addressLowerLimit = actualQuadruple[2]
@@ -503,23 +508,107 @@ class VM:
                 upperLimitValue = self.virtualMemoryDictionary.get(addressUpperLimit)
 
                 if(valueToCompare == lowerLimitValue or valueToCompare == upperLimitValue or (valueToCompare > lowerLimitValue and valueToCompare < upperLimitValue)):
-                    print("ARRAY INDEX IN THE ACCEPTED LIMITS")
+                    print(" ")
                 elif(valueToCompare < lowerLimitValue or valueToCompare > upperLimitValue):
                     raise TypeError("ERROR: ARRAY INDEX OFF LIMITS")
+            elif(actualQuadruple[0] == 'MEDIA'):
+                baseDir = actualQuadruple[1]
+                endingIndex = actualQuadruple[2]
+
+                sum = 0
+
+                whileCounter = 0
+
+                while(whileCounter < endingIndex or whileCounter == endingIndex):
+                    index = baseDir + whileCounter
+                    number = self.virtualMemoryDictionary.get(index, 'nothing')
+
+                    #print("NUMBER FROM DICTIONARY: ", number)
+
+                    sum = sum + number
+
+                    whileCounter = whileCounter + 1
+
+                totalNumbers = endingIndex + 1
+
+                result = sum / totalNumbers
+
+                memoryToStore = actualQuadruple[3]
+                
+                self.virtualMemoryDictionary[memoryToStore] = result
+            elif(actualQuadruple[0] == 'MODA'):
+                baseDir = actualQuadruple[1]
+                endingIndex = actualQuadruple[2]
+
+                array = []
+
+                whileCounter = 0
+
+                while(whileCounter < endingIndex or whileCounter == endingIndex):
+                    index = baseDir + whileCounter
+                    number = self.virtualMemoryDictionary.get(index, 'nothing')
 
 
-            #MANDAR COMO PARAM UN ARREGLO: self.checkIndirectIndex(
+                    array.append(number)
+
+                    whileCounter = whileCounter + 1
+
+                result = statistics.mode(array)
+
+                memoryToStore = actualQuadruple[3]
+                
+                self.virtualMemoryDictionary[memoryToStore] = result
+            elif(actualQuadruple[0] == 'VARIANZA'):
+                baseDir = actualQuadruple[1]
+                endingIndex = actualQuadruple[2]
+
+                array = []
+
+                whileCounter = 0
+
+                while(whileCounter < endingIndex or whileCounter == endingIndex):
+                    index = baseDir + whileCounter
+                    number = self.virtualMemoryDictionary.get(index, 'nothing')
+
+
+                    array.append(number)
+
+                    whileCounter = whileCounter + 1
+
+                result = var(array)
+
+                memoryToStore = actualQuadruple[3]
+                
+                self.virtualMemoryDictionary[memoryToStore] = result
                 
             
 
 
 
 
-            print(" ")
-            print(self.virtualMemoryDictionary)
-            print(" ")
+            # print(" ")
+            #print(self.virtualMemoryDictionary)
+            # print(" ")
 
             self.actualQuadupleCounter = self.actualQuadupleCounter + 1
+        
+
+        print("/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////")
+        print("/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////")
+        print("/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////")
+        print("END OF EXECUTION:")
+
+        print("")
+        print("Quadruples generated:")
+        pprint.pprint(self.quadruplesDictionary)
+
+        print("")
+        print("FuncDir data:")
+        pprint.pprint(self.functionsDictionary)
+
+        print("")
+        print("Variables data:")
+        pprint.pprint(self.varsData)
 
             
 
